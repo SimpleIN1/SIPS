@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  server-auth:
+    build:
+      context: .
+      dockerfile: dockerfile/backend.Dockerfile
+      target: server-auth
+    restart: always
+    depends_on:
+      - postgres-auth
+    env_file:
+      - backend/AuthenticationService/.docker.auth.postgres.env
+      - backend/AuthenticationService/.docker.auth.env
+    ports:
+      - "0.0.0.0:5000:8000"
+    volumes:
+      - ./backend/AuthenticationService/AccountProject/:/usr/src/app/AccountProject/
+    command: bash -c '/usr/src/app/venv/bin/python manage.py runserver 0.0.0.0:8000'
+
+
+  postgres-auth:
+    image: postgres:17.6
+    restart: unless-stopped
+    expose:
+      - "5432"
+    env_file:
+      - backend/AuthenticationService/.docker.auth.postgres.env
+    volumes:
+      - auth-db-volume:/var/lib/postgresql/data/
+
+volumes:
+  auth-db-volume:
