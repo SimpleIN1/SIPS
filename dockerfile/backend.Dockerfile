@@ -1,4 +1,4 @@
-FROM python:3.9.0-slim AS server-auth
+FROM python:3.9.0-slim AS builder
 LABEL authors="SimpleIN1 <serbinovichgs@ict.nsc.ru>"
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -22,3 +22,13 @@ COPY --chown=django-user:django-user backend/AuthenticationService/AccountProjec
 RUN chown -R django-user:django-user /usr/src/app/AccountProject/
 
 WORKDIR /usr/src/app/AccountProject
+
+FROM builder AS server-auth
+COPY --chown=django-user:django-user ./backend/AuthenticationService/entrypoint.sh  \
+                                     ./backend/AuthenticationService/start.sh ../
+RUN chmod u+x /usr/src/app/entrypoint.sh /usr/src/app/start.sh
+
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+
+
+FROM builder AS celery

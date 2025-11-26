@@ -10,3 +10,4 @@ class UserModel(AbstractUser):
     username = models.CharField(verbose_name=_('Username'), max_length=150, default='', blank=True,)
     email = models.EmailField(unique=True)
     middle_name = models.CharField(max_length=150, null=True, blank=True, verbose_name="middle_name")
+    is_verify = models.BooleanField(default=False)

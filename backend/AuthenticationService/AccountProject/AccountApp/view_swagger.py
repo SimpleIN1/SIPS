@@ -14,3 +14,15 @@ class UserListSwagger:
             }
         ),
     }
+
+
+class ResetPasswordSwagger:
+    responses = {
+        200: openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            title="ResetPasswordSwagger",
+            properties={
+                'detail': openapi.Schema(type=openapi.TYPE_STRING),
+            }
+        ),
+    }

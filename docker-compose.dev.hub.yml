@@ -2,10 +2,7 @@ version: "3"
 
 services:
   server-auth:
-    build:
-      context: .
-      dockerfile: dockerfile/backend.Dockerfile
-      target: server-auth
+    image: simplen1/sips-server-auth
     restart: always
     depends_on:
       - postgres-auth
@@ -15,15 +12,10 @@ services:
       - backend/AuthenticationService/.docker.broker.env
     ports:
       - "0.0.0.0:5000:8000"
-    volumes:
-      - ./backend/AuthenticationService/AccountProject/:/usr/src/app/AccountProject/
     command: bash -c '/usr/src/app/start.sh'
 
   celery-worker:
-    build:
-      context: .
-      dockerfile: dockerfile/backend.Dockerfile
-      target: celery
+    image: simplen1/sips-celery-worker
     restart: unless-stopped
     command: bash -c '/usr/src/app/venv/bin/celery -A CeleryApp.app worker --loglevel=debug -c 4 -n celery-worker'
     depends_on:

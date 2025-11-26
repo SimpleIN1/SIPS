@@ -8,7 +8,7 @@ schema_view = get_schema_view(
    openapi.Info(
       title="Документации по API миксросервиса аутентификации пользователей",
       default_version='v1',
-      description="API аутентификации пользователей содержит следующее: регистарация, автризация, просмотр личной информации, восставновление, ограниченный доступ для просмотра файов о пользователях.",
+      description="API аутентификации пользователей содержит следующее: регистарация, автризация, восставновление, ограниченный доступ для просмотра информации о пользователях.",
       terms_of_service="https://www.google.com/policies/terms/",
       contact=openapi.Contact(email="serbinovichgs@ict.nsc.ru"),
       license=openapi.License(name="BSD License"),
@@ -18,5 +18,5 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]

@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 
 ALLOWED_HOSTS = ["*"]
 
@@ -66,7 +66,7 @@ ROOT_URLCONF = 'AccountProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -144,6 +144,34 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Logging query language
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    },
+}
+
+
+# Caches
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv('CACHE_REDIS', "redis://localhost:6379/0"),
+    }
+}
+CACHE_VERIFY_REGISTER_EMAIL = "register-email"
+CACHE_PASSWORD_RESET_EMAIL = "password-reset"
+
 
 # Rest Framework settings
 REST_FRAMEWORK = {
@@ -183,7 +211,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
-    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
+    "USER_AUTHENTICATION_RULE": "AccountApp.services.jwt_authentication.default_user_authentication_rule",  # update rule
     "ON_LOGIN_SUCCESS": "rest_framework_simplejwt.serializers.default_on_login_success",
     "ON_LOGIN_FAILED": "rest_framework_simplejwt.serializers.default_on_login_failed",
 
@@ -197,10 +225,43 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 
-    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
-    "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
+    "TOKEN_OBTAIN_SERIALIZER": "AccountApp.serializers.TokenObtainPairSerializerJWT", # update serializer
+    "TOKEN_REFRESH_SERIALIZER": "AccountApp.serializers.TokenRefreshSerializerJWT", # update serializer
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
+}
+
+
+# Sites settings
+WEBSITE_NAME = os.getenv("WEBSITE_NAME")
+SCHEMA = os.getenv("SCHEMA")
+DOMAIN = os.getenv("DOMAIN")
+PORT = os.getenv("PORT")
+SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
+
+NOTIFY_EXPIRATION_MINUTES = 20
+
+URL_FRONTEND_404 = os.getenv("URL_FRONTEND_404")
+URL_FRONTEND_RESET_PASSWORD = os.getenv("URL_FRONTEND_RESET_PASSWORD")
+
+# Email settings
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+EMAIL_USE_TLS = (bool(int(os.getenv('EMAIL_USE_TLS', 1))))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
+
+EMAIL_SEND = (bool(int(os.getenv('EMAIL_SEND', 1))))
+
+
+# Celery settings
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+
+BROKER_URL = os.getenv("CELERY_BROKER_URL")
+BROKER_TRANSPORT_OPTIONS = {
+    'visibility_timeout': 3600
 }

@@ -1,0 +1,17 @@
+
+import os
+import logging
+
+from celery import Celery
+from celery.signals import worker_ready
+from celery.schedules import crontab
+from django.apps import apps
+from django.conf import settings
+
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'AccountProject.settings')
+app = Celery('CeleryApp', broker=settings.BROKER_URL, backend=settings.CELERY_RESULT_BACKEND)
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+app.autodiscover_tasks(lambda: [n.name for n in apps.get_app_configs()])
+app.conf.broker_connection_retry_on_startup = True
