@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     "cacheops",
     "drf_yasg",
 
-    "AccountApp.apps.AccountAppConfig"
+    "AccountApp.apps.AccountAppConfig",
+    "AuthApp.apps.AuthAppConfig"
 ]
 
 MIDDLEWARE = [
@@ -211,7 +212,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
-    "USER_AUTHENTICATION_RULE": "AccountApp.services.jwt_authentication.default_user_authentication_rule",  # update rule
+    "USER_AUTHENTICATION_RULE": "AuthApp.jwt_authentication.default_user_authentication_rule",  # update rule
     "ON_LOGIN_SUCCESS": "rest_framework_simplejwt.serializers.default_on_login_success",
     "ON_LOGIN_FAILED": "rest_framework_simplejwt.serializers.default_on_login_failed",
 
@@ -225,8 +226,8 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 
-    "TOKEN_OBTAIN_SERIALIZER": "AccountApp.serializers.TokenObtainPairSerializerJWT", # update serializer
-    "TOKEN_REFRESH_SERIALIZER": "AccountApp.serializers.TokenRefreshSerializerJWT", # update serializer
+    "TOKEN_OBTAIN_SERIALIZER": "AuthApp.serializers.TokenObtainPairSerializerJWT",  # update serializer
+    "TOKEN_REFRESH_SERIALIZER": "AuthApp.serializers.TokenRefreshSerializerJWT",  # update serializer
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
     "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",

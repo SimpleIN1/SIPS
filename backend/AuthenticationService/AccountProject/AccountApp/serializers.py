@@ -5,8 +5,6 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.sessions.backends.cache import SessionStore # cache
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import (TokenObtainPairSerializer,
-                                                  TokenRefreshSerializer)
 
 from AccountApp.services.confirmation_email import send_confirmation_email, send_reset_password_email, \
     confirm_reset_password_email
@@ -72,16 +70,3 @@ class ResetPasswordChangeSerializer(PasswordValidateSerializer, serializers.Seri
         print("password", self.validated_data["password"])
         secure_password = make_password(self.validated_data["password"])
         UserModel.objects.filter(id=user_id).update(password=secure_password)
-
-
-default_error_messages_serializer = {
-    "no_active_account": "No active or no verify account found with the given credentials"
-}
-
-
-class TokenObtainPairSerializerJWT(TokenObtainPairSerializer):
-    default_error_messages = default_error_messages_serializer
-
-
-class TokenRefreshSerializerJWT(TokenRefreshSerializer):
-    default_error_messages = default_error_messages_serializer
