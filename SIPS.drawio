@@ -1,0 +1,116 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0" version="29.2.1" pages="4">
+  <diagram name="C4  context" id="defhP8kDEtbnpn72IqpB">
+    <mxGraphModel dx="1240" dy="696" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <object placeholders="1" c4Name="Person name" c4Type="Person" c4Description="Description of person." label="&lt;font style=&quot;font-size: 16px&quot;&gt;&lt;b&gt;%c4Name%&lt;/b&gt;&lt;/font&gt;&lt;div&gt;[%c4Type%]&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;font style=&quot;font-size: 11px&quot;&gt;&lt;font color=&quot;#cccccc&quot;&gt;%c4Description%&lt;/font&gt;&lt;/div&gt;" id="cjeiOM34qsmNPPAvgnD_-4">
+          <mxCell parent="1" style="html=1;fontSize=11;dashed=0;whiteSpace=wrap;fillColor=#083F75;strokeColor=#06315C;fontColor=#ffffff;shape=mxgraph.c4.person2;align=center;metaEdit=1;points=[[0.5,0,0],[1,0.5,0],[1,0.75,0],[0.75,1,0],[0.5,1,0],[0.25,1,0],[0,0.75,0],[0,0.5,0]];resizable=0;resizeHeight=0;resizeWidth=0;" vertex="1">
+            <mxGeometry height="180" width="200" x="110" y="250" as="geometry" />
+          </mxCell>
+        </object>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="CuWFuEURNd3cd6zC3OPC" name="Диаграмма активности">
+    <mxGraphModel dx="1188" dy="667" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hQtbBTILN1ijDFdQVxll-12" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-13" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-15" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-17" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=10;" value="&lt;div&gt;Пользователь&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="100" y="170" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-20" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-16">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="655" y="50" />
+              <mxPoint x="390" y="50" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-22" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-24" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-26" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-28" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-30" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-29">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-3" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=10;" value="&lt;div&gt;Зарегистрированный&amp;nbsp;&lt;/div&gt;&lt;div&gt;пользователь&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="640" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-19" edge="1" parent="1" source="hQtbBTILN1ijDFdQVxll-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="hQtbBTILN1ijDFdQVxll-18">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-8" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;fontSize=10;" value="Администратор" vertex="1">
+          <mxGeometry height="60" width="30" x="100" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-10" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;Регистрация&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="110" x="280" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-11" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;Авторизация&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="110" x="280" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-14" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;Восстановление пароля&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="110" x="280" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-16" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Визуализация композитов на карте" vertex="1">
+          <mxGeometry height="50" width="110" x="280" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-18" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&amp;nbsp;Управление пользователями" vertex="1">
+          <mxGeometry height="50" width="110" x="280" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-21" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;div&gt;Изменение пользовательских&lt;/div&gt;&lt;div&gt;данных&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="110" x="410" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-23" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Формирование полигона композитов" vertex="1">
+          <mxGeometry height="50" width="110" x="410" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-25" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Скачивание композитов по полигонам" vertex="1">
+          <mxGeometry height="50" width="110" x="410" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-27" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Скачивание композитов" vertex="1">
+          <mxGeometry height="50" width="110" x="410" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="hQtbBTILN1ijDFdQVxll-29" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="Просмотр истории скачивания" vertex="1">
+          <mxGeometry height="50" width="110" x="410" y="330" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="YpnQcZVd0KXa2EwcnBss" name="Диаграмма вариантов использования">
+    <mxGraphModel dx="1426" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="1rBxA-Xq5ax2FQGcwWXC" name="Базы данных">
+    <mxGraphModel dx="1426" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
