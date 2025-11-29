@@ -17,3 +17,4 @@ django-rest-swagger==2.2.0
 python-dotenv==0.21.0
 drf_yasg==1.21.6
 djangorestframework-simplejwt==5.5.1
+django-rest-registration==0.9.0

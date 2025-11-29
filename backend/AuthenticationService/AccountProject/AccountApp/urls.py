@@ -1,12 +1,21 @@
-from rest_framework import routers, urls
-
-from AccountApp import views
+from rest_framework.urls import path
+from rest_registration.api import views
 
 
 urlpatterns = [
-    urls.path("users/", views.UserListCreateAPIView.as_view(), name="user-list-create"),
-    urls.path("users/<int:pk>/", views.UserRetrieveUpdateDestroyAPIView.as_view(), name="user-rud"),
-    urls.path("verify/<str:sessionid>/", views.VerifyEmailAPIView.as_view(), name="email-verify"),
-    urls.path("resetpassword/", views.ResetPasswordAPIView.as_view(), name="rest-password"),
-    urls.path("resetpassword/change/", views.ResetPasswordChangeAPIView.as_view(), name="rest-password-change"),
+    path('register/', views.register, name='register'),
+    path('register/verify/', views.verify_registration, name='verify-registration'),
+
+    path(
+        'reset-password/send-link/', views.send_reset_password_link,
+        name='send-reset-password-link',
+    ),
+    path('reset-password/', views.reset_password, name='reset-password'),
+
+    path('profile/', views.profile, name='profile'),
+
+    path('change-password/', views.change_password, name='change-password'),
+
+    path('register-email/', views.register_email, name='register-email'),
+    path('register-email/verify/', views.verify_email, name='verify-email'),
 ]

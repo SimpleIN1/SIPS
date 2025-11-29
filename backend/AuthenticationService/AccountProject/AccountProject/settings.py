@@ -14,12 +14,10 @@ from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -31,7 +29,6 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 
 ALLOWED_HOSTS = ["*"]
-
 
 # Application definition
 
@@ -47,6 +44,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "cacheops",
     "drf_yasg",
+    "rest_registration",
 
     "AccountApp.apps.AccountAppConfig",
     "AuthApp.apps.AuthAppConfig"
@@ -82,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'AccountProject.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -103,7 +100,6 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 USERNAME_FIELD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -122,7 +118,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -133,7 +128,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -162,7 +156,6 @@ LOGGING = {
     },
 }
 
-
 # Caches
 CACHES = {
     "default": {
@@ -170,8 +163,6 @@ CACHES = {
         "LOCATION": os.getenv('CACHE_REDIS', "redis://localhost:6379/0"),
     }
 }
-CACHE_VERIFY_REGISTER_EMAIL = "register-email"
-CACHE_PASSWORD_RESET_EMAIL = "password-reset"
 
 
 # Rest Framework settings
@@ -182,15 +173,14 @@ REST_FRAMEWORK = {
 }
 
 SWAGGER_SETTINGS = {
-   'SECURITY_DEFINITIONS': {
-      'Bearer': {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
-      }
-   }
+        }
+    }
 }
-
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
@@ -212,7 +202,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",
     "USER_ID_CLAIM": "user_id",
-    "USER_AUTHENTICATION_RULE": "AuthApp.jwt_authentication.default_user_authentication_rule",  # update rule
+    "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
     "ON_LOGIN_SUCCESS": "rest_framework_simplejwt.serializers.default_on_login_success",
     "ON_LOGIN_FAILED": "rest_framework_simplejwt.serializers.default_on_login_failed",
 
@@ -234,7 +224,6 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-
 # Sites settings
 WEBSITE_NAME = os.getenv("WEBSITE_NAME")
 SCHEMA = os.getenv("SCHEMA")
@@ -242,10 +231,8 @@ DOMAIN = os.getenv("DOMAIN")
 PORT = os.getenv("PORT")
 SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
 
-NOTIFY_EXPIRATION_MINUTES = 20
 
-URL_FRONTEND_404 = os.getenv("URL_FRONTEND_404")
-URL_FRONTEND_RESET_PASSWORD = os.getenv("URL_FRONTEND_RESET_PASSWORD")
+URL_FRONTEND_404 = os.getenv("FRONTEND_404_URL")
 
 # Email settings
 EMAIL_HOST = os.getenv("EMAIL_HOST")
@@ -257,12 +244,40 @@ DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 EMAIL_SEND = (bool(int(os.getenv('EMAIL_SEND', 1))))
 
-
 # Celery settings
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+CELERY_IMPORTS = ("CeleryApp.tasks",)  # Добавлять если импорт модуей просиходит из других пакетов
 
 BROKER_URL = os.getenv("CELERY_BROKER_URL")
 BROKER_TRANSPORT_OPTIONS = {
     'visibility_timeout': 3600
 }
+
+
+REST_REGISTRATION = {
+    'REGISTER_VERIFICATION_URL': os.getenv("FRONTEND_REGISTER_VERIFICATION_URL"),
+    'RESET_PASSWORD_VERIFICATION_URL': os.getenv("FRONTEND_RESET_PASSWORD_VERIFICATION_URL"),
+    'REGISTER_EMAIL_VERIFICATION_URL': os.getenv("FRONTEND_REGISTER_EMAIL_VERIFICATION_URL"),
+    'RESET_PASSWORD_VERIFICATION_EMAIL_SENDER': 'AccountApp.services.mail.send_reset_password_verification_email_notification_custom',
+
+    'RESET_PASSWORD_VERIFICATION_EMAIL_TEMPLATES': {
+        'html_body': 'mail/reset_password/body.html',
+        'subject': 'mail/reset_password/subject.txt'
+    },
+    "REGISTER_VERIFICATION_EMAIL_TEMPLATES": {
+        'html_body': 'mail/register/body.html',
+        'subject': 'mail/register/subject.txt'
+    },
+    "REGISTER_EMAIL_VERIFICATION_EMAIL_TEMPLATES": {
+        'html_body': 'mail/register_email/body.html',
+        'subject': 'mail/register_email/subject.txt'
+    },
+
+    "VERIFICATION_TEMPLATE_CONTEXT_BUILDER": "AccountApp.services.mail.build_default_template_context",
+
+    'USER_HIDDEN_FIELDS': ('last_login', 'is_active', 'is_staff', 'is_superuser', 'user_permissions',
+                           'groups', 'date_joined', 'username'),
+    'VERIFICATION_FROM_EMAIL': os.getenv("EMAIL_HOST_USER"),
+}
+
