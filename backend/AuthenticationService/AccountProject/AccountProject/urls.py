@@ -17,9 +17,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.urls import path, include
 from rest_framework.urls import path
-from rest_framework_simplejwt.views import (TokenObtainPairView,
-                                            TokenRefreshView,
-                                            TokenVerifyView)
+
 
 # Project route
 MAIN_ROUTE = "api/account"
@@ -28,10 +26,8 @@ AUTH_ROUTE = f"{MAIN_ROUTE}/auth"
 
 urlpatterns = [
     path(f'admin/', admin.site.urls),
-    path(f'{MAIN_ROUTE}/', include("AccountApp.urls")),
     path(f'{MAIN_ROUTE}/swagger/', include("AccountProject.urls_swagger")),
-    path(f'{AUTH_ROUTE}/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path(f'{AUTH_ROUTE}/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path(f'{AUTH_ROUTE}/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path(f'{MAIN_ROUTE}/', include("AccountApp.urls")),
+    path(f'{AUTH_ROUTE}/', include("AuthApp.urls")),
 ]
 

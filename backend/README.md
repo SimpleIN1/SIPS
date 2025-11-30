@@ -31,8 +31,10 @@ Example conf for ".docker.auth.env":
     
     CACHE_REDIS=redis://redis:6379/0
     
-    URL_FRONTEND_404=http://0.0.0.0:5000/404
-    URL_FRONTEND_RESET_PASSWORD=http://0.0.0.0:5000/reset_password
+    FRONTEND_404_URL=https://frontend-host/404
+    FRONTEND_RESET_PASSWORD_VERIFICATION_URL=https://frontend-host/reset-password/
+    FRONTEND_REGISTER_EMAIL_VERIFICATION_URL=https://frontend-host/verify-email/
+    FRONTEND_REGISTER_VERIFICATION_URL=https://frontend-host/verify-user/
     
     MIGRATIONS=1
 
