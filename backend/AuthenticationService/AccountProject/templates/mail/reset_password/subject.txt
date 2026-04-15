@@ -1,1 +1,1 @@
-Reset password link was sent — {{ site_name }}
+Reset password code — {{ otp_code }} was sent — {{ site_name }}

@@ -13,10 +13,6 @@
 
 **/.pytest_cache
 
-**/migrations/**
-!**/migrations
-!**/migrations/__init__.py
-
 **/locale
 **/media/*
 

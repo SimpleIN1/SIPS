@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
+import sys
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
@@ -27,6 +28,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (bool(int(os.getenv('DEBUG', 1))))
+TEST = len(sys.argv) > 1 and not str(sys.argv[1]).isdigit() and str(sys.argv[1]) == "test"
 
 ALLOWED_HOSTS = ["*"]
 
@@ -132,7 +134,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+static_join = os.path.join(BASE_DIR, 'static')
+if DEBUG:
+    STATICFILES_DIRS = [static_join]
+else:
+    STATIC_ROOT = static_join
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -149,10 +156,10 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        }
+        # 'django.db.backends': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['console'],
+        # }
     },
 }
 
@@ -169,7 +176,8 @@ CACHES = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'EXCEPTION_HANDLER': 'AccountApp.exceptions.user_exception_handler',
 }
 
 SWAGGER_SETTINGS = {
@@ -231,7 +239,6 @@ DOMAIN = os.getenv("DOMAIN")
 PORT = os.getenv("PORT")
 SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
 
-
 URL_FRONTEND_404 = os.getenv("FRONTEND_404_URL")
 
 # Email settings
@@ -241,8 +248,6 @@ EMAIL_USE_TLS = (bool(int(os.getenv('EMAIL_USE_TLS', 1))))
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
-
-EMAIL_SEND = (bool(int(os.getenv('EMAIL_SEND', 1))))
 
 # Celery settings
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
@@ -259,7 +264,10 @@ REST_REGISTRATION = {
     'REGISTER_VERIFICATION_URL': os.getenv("FRONTEND_REGISTER_VERIFICATION_URL"),
     'RESET_PASSWORD_VERIFICATION_URL': os.getenv("FRONTEND_RESET_PASSWORD_VERIFICATION_URL"),
     'REGISTER_EMAIL_VERIFICATION_URL': os.getenv("FRONTEND_REGISTER_EMAIL_VERIFICATION_URL"),
-    'RESET_PASSWORD_VERIFICATION_EMAIL_SENDER': 'AccountApp.services.mail.send_reset_password_verification_email_notification_custom',
+
+    'REGISTER_VERIFICATION_EMAIL_SENDER': 'AccountApp.services.notifications.send_register_verification_email_notification',
+    'RESET_PASSWORD_VERIFICATION_EMAIL_SENDER': 'AccountApp.services.notifications.send_reset_password_verification_email_notification',
+    'REGISTER_EMAIL_VERIFICATION_EMAIL_SENDER': 'AccountApp.services.notifications.send_register_email_verification_email_notification',
 
     'RESET_PASSWORD_VERIFICATION_EMAIL_TEMPLATES': {
         'html_body': 'mail/reset_password/body.html',
@@ -274,10 +282,13 @@ REST_REGISTRATION = {
         'subject': 'mail/register_email/subject.txt'
     },
 
-    "VERIFICATION_TEMPLATE_CONTEXT_BUILDER": "AccountApp.services.mail.build_default_template_context",
+    "VERIFICATION_TEMPLATE_CONTEXT_BUILDER": "AccountApp.services.notifications.build_default_template_context",
 
     'USER_HIDDEN_FIELDS': ('last_login', 'is_active', 'is_staff', 'is_superuser', 'user_permissions',
                            'groups', 'date_joined', 'username'),
     'VERIFICATION_FROM_EMAIL': os.getenv("EMAIL_HOST_USER"),
+    'USER_LOGIN_FIELDS': ["email", ],
 }
 
+OTP_CODE_TIME_MINUTES = 30
+OTP_CODE_NEXT_TIME_MINUTES = 2
