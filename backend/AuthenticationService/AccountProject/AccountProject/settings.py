@@ -30,7 +30,16 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 TEST = len(sys.argv) > 1 and not str(sys.argv[1]).isdigit() and str(sys.argv[1]) == "test"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
+
+INTERNAL_IPS = os.getenv("INTERNAL_IPS").split(',')
+
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(',')
+
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+if not CORS_ALLOW_ALL_ORIGINS:
+    CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN_WHITELIST").split(',')
 
 # Application definition
 
