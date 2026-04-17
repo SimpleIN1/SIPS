@@ -17,12 +17,6 @@ urlpatterns = [
     path('reset/password/otpcode/verify/', VerifyOTPResetPasswordAPIView.as_view(), name='verify-otpcode-reset-password'),
     path('reset/password/otpcode/repeat/', RepeatOTPCodeResetPasswordAPIView.as_view(), name='repeat-otpcode-reset-password'),
 
-    # path(
-    #     'reset-password/send-link/', views.send_reset_password_link,
-    #     name='send-reset-password-link',
-    # ),
-    # path('reset-password/', views.reset_password, name='reset-password'),
-
     path('profile/', views.profile, name='profile'),
 
     path('change/password/', views.change_password, name='change-password'),

@@ -5,7 +5,7 @@ services:
     image: nginx:1.29
     restart: unless-stopped
     ports:
-      - "0.0.0.0:8443:8443"
+      - "0.0.0.0:${NGINX_SERVER_PORT}:${NGINX_SERVER_PORT}"
     depends_on:
       - server-auth
     env_file:

@@ -31,15 +31,16 @@ DEBUG = (bool(int(os.getenv('DEBUG', 1))))
 TEST = len(sys.argv) > 1 and not str(sys.argv[1]).isdigit() and str(sys.argv[1]) == "test"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(',')
-
 INTERNAL_IPS = os.getenv("INTERNAL_IPS").split(',')
-
 CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS").split(',')
 
+# CORS
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-if not CORS_ALLOW_ALL_ORIGINS:
-    CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN_WHITELIST").split(',')
+
+# CORS_ORIGIN_WHITELIST = os.getenv("CORS_ORIGIN_WHITELIST").split(',')
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -51,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
     "cacheops",
@@ -62,13 +64,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = 'AccountProject.urls'
@@ -247,6 +250,10 @@ SCHEMA = os.getenv("SCHEMA")
 DOMAIN = os.getenv("DOMAIN")
 PORT = os.getenv("PORT")
 SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
+
+MAIN_ROUTE = "api/account"
+AUTH_ROUTE = f"{MAIN_ROUTE}/auth"
+DOCS_ROUTE = "docs"
 
 URL_FRONTEND_404 = os.getenv("FRONTEND_404_URL")
 

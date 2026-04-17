@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.1/howto/deployment/wsgi/
 
 import os
 
+from django.urls import reverse_lazy
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'AccountProject.settings')
@@ -22,12 +23,12 @@ def make_init_request():
 
     f = RequestFactory()
     request = f.request(**{
-        'wsgi.url_scheme': 'http',
+        'wsgi.url_scheme': settings.SCHEMA,
         'HTTP_HOST': settings.DOMAIN,
         'QUERY_STRING': '',
         'REQUEST_METHOD': 'GET',
-        'PATH_INFO': '/account/login/',
-        'SERVER_PORT': '8080',
+        'PATH_INFO': reverse_lazy("profile"),
+        'SERVER_PORT': settings.PORT,
     })
 
     def start_response(*args):

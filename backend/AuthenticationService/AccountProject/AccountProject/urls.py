@@ -21,17 +21,11 @@ from django.conf.urls.static import static
 from rest_framework.urls import path
 
 
-# Project route
-MAIN_ROUTE = "api/account"
-AUTH_ROUTE = f"{MAIN_ROUTE}/auth"
-DOCS_ROUTE = "docs"
-
-
 urlpatterns = [
     path(f'admin/', admin.site.urls),
-    path(f'{DOCS_ROUTE}/swagger/', include("AccountProject.urls_swagger")),
-    path(f'{MAIN_ROUTE}/', include("AccountApp.urls")),
-    path(f'{AUTH_ROUTE}/', include("AuthApp.urls")),
+    path(f'{conf.DOCS_ROUTE}/swagger/', include("AccountProject.urls_swagger")),
+    path(f'{conf.MAIN_ROUTE}/', include("AccountApp.urls")),
+    path(f'{conf.AUTH_ROUTE}/', include("AuthApp.urls")),
 ]
 
 if conf.DEBUG:
