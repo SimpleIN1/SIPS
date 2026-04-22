@@ -69,3 +69,7 @@ Run commands into docker-container (not required):
     docker-compose -f docker-compose.dev.yml exec server-auth ../venv/bin/python manage.py makemigrations
     docker-compose -f docker-compose.dev.yml exec server-auth ../venv/bin/python manage.py migrate
 
+Run command collect static
+
+    docker-compose -f docker-compose.prod.yml exec server ../venv/bin/python manage.py collectstatic
+

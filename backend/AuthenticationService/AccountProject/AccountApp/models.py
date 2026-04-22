@@ -1,4 +1,7 @@
+from datetime import datetime
+
 from django.db import models
+from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser, UserManager
 
@@ -18,3 +21,29 @@ class UserModel(AbstractUser):
     middle_name = models.CharField(max_length=150, null=True, blank=True, verbose_name="middle_name")
 
     objects = UserManagerCustom()
+
+
+class OTPUserModel(models.Model):
+    NOTIFICATION_TYPE_OTP_CHOICES = (
+        (0, "Default"),
+        (1, "Verify register"),
+        (2, "Verify register email"),
+        (3, "Verify reset password"),
+    )
+
+    user = models.ForeignKey("AccountApp.UserModel", on_delete=models.CASCADE)
+    otp_code = models.CharField(max_length=6, validators=[MinLengthValidator(6)])
+    expires = models.DateTimeField()
+    next_code_time = models.DateTimeField(null=True, blank=True)
+    confirm = models.BooleanField(default=False)
+    notification_type_otp = models.SmallIntegerField(choices=NOTIFICATION_TYPE_OTP_CHOICES, default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_expire(self, current_client_time: datetime):
+        return current_client_time > self.expires
+
+    def is_get_next_code(self, current_client_time: datetime):
+        return current_client_time > self.next_code_time
+
+    def __str__(self):
+        return f"OTPUserModel(opt_code={self.otp_code})"

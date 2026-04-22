@@ -1,6 +1,22 @@
 version: "3"
 
 services:
+  nginx:
+    image: nginx:1.29
+    restart: unless-stopped
+    ports:
+      - "0.0.0.0:${NGINX_SERVER_PORT}:${NGINX_SERVER_PORT}"
+    depends_on:
+      - server-auth
+    env_file:
+      - .docker.nginx.env
+    volumes:
+      - ./nginx/conf.d/default.conf:/usr/src/app/nginx/conf.d/default.conf
+      - etc-letsencrypt:/etc/letsencrypt/
+      - static-volume:/usr/src/app/AccountProject/static
+      - ${PATH_TO_TILES}:/usr/src/tiles/
+    command: /bin/bash -c "envsubst '$${SERVER_NAME},$${SERVER_PORT},$${SSL_CERTIFICATE_PATH},$${SSL_CERTIFICATE_KEY_PATH}' < /usr/src/app/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
   server-auth:
     build:
       context: .
@@ -13,10 +29,45 @@ services:
       - backend/AuthenticationService/.docker.auth.postgres.env
       - backend/AuthenticationService/.docker.auth.env
       - backend/AuthenticationService/.docker.broker.env
-    ports:
-      - "0.0.0.0:5000:8000"
+    expose:
+      - "8000"
     volumes:
       - ./backend/AuthenticationService/AccountProject/:/usr/src/app/AccountProject/
+      - static-volume:/usr/src/app/AccountProject/static
+    command: bash -c '/usr/src/app/start.sh'
+
+  server-info-composite:
+    build:
+      context: .
+      dockerfile: dockerfile/backend.Dockerfile
+      target: server-info-composite
+    restart: always
+    depends_on:
+      - postgres-composite
+    env_file:
+      - backend/InfoCompositeOutputDataRESTAPIService/.docker.composite.postgres.env
+      - backend/InfoCompositeOutputDataRESTAPIService/.docker.composite.env
+    expose:
+      - "8000"
+    volumes:
+      - ./backend/InfoCompositeOutputDataRESTAPIService/api/:/usr/src/app/api/
+    command: bash -c '/usr/src/app/start.sh'
+
+  server-docs-agregator:
+    build:
+      context: .
+      dockerfile: dockerfile/backend.Dockerfile
+      target: server-docs-agregator
+    restart: always
+    depends_on:
+      - postgres-composite
+    env_file:
+      - backend/DocsAgregatorSwaggerUI/.docker.docs-swagger.env
+    expose:
+      - "8000"
+    volumes:
+      - ./backend/AuthenticationService/AccountProject/:/usr/src/app/AccountProject/
+      - static-volume:/usr/src/app/AccountProject/static
     command: bash -c '/usr/src/app/start.sh'
 
   celery-worker:
@@ -50,5 +101,18 @@ services:
     volumes:
       - auth-db-volume:/var/lib/postgresql/data/
 
+  postgres-composite:
+    image: postgres:17.6
+    restart: unless-stopped
+    expose:
+      - "5432"
+    env_file:
+      - backend/InfoCompositeOutputDataRESTAPIService/.docker.composite.postgres.env
+    volumes:
+      - composite-db-volume:/var/lib/postgresql/data
+
 volumes:
   auth-db-volume:
+  composite-db-volume:
+  static-volume:
+  etc-letsencrypt:

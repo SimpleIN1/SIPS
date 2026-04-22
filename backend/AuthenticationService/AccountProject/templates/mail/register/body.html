@@ -3,7 +3,7 @@
 
 {% translate "Please go to the following page and confirm your email address:" %}
 {% block reset_link %}
-{{ verification_url }}
+<a href="{{ verification_url }}">verify email</a>
 {% endblock %}
 
 {% translate "Thanks for using our site!" %}

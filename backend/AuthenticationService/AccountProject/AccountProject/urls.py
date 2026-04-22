@@ -14,20 +14,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.conf import settings
 from django.urls import path, include
+from django.conf import settings as conf
+from django.conf.urls.static import static
+
 from rest_framework.urls import path
-
-
-# Project route
-MAIN_ROUTE = "api/account"
-AUTH_ROUTE = f"{MAIN_ROUTE}/auth"
 
 
 urlpatterns = [
     path(f'admin/', admin.site.urls),
-    path(f'{MAIN_ROUTE}/swagger/', include("AccountProject.urls_swagger")),
-    path(f'{MAIN_ROUTE}/', include("AccountApp.urls")),
-    path(f'{AUTH_ROUTE}/', include("AuthApp.urls")),
+    path(f'{conf.DOCS_ROUTE}/swagger/', include("AccountProject.urls_swagger")),
+    path(f'{conf.MAIN_ROUTE}/', include("AccountApp.urls")),
+    path(f'{conf.AUTH_ROUTE}/', include("AuthApp.urls")),
 ]
 
+if conf.DEBUG:
+    urlpatterns += static(conf.STATIC_URL, document_root=conf.STATIC_ROOT)
+    urlpatterns += static(conf.MEDIA_URL, document_root=conf.MEDIA_ROOT)
