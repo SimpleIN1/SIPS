@@ -43,7 +43,7 @@ api = Api(
     description="Сервис предоставления информации о выходных данных "
                 "после обработки вычислительным комплексом для оперативной "
                 "обработки данных радиометра VIIRS спутников Suomi-NPP, NOAA-20",
-    schemes=["http", "https"],
+    schemes=["https", "http"],
     terms="https://www.google.com/policies/terms/"
 )
 
