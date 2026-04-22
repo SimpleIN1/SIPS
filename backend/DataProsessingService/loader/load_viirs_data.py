@@ -219,6 +219,11 @@ def main():
     with open(conf.PATH_TO_FILE_DIRS, 'r') as f:
         for path in f.readlines():
             path = path.rstrip('\n')
+
+            gitco_filename_data.clear()
+            fire_value_filenames.clear()
+            composite_filenames.clear()
+
             for filename in os.listdir(path):
                 if match := pattern_composite.search(filename):
                     composite_filenames.append({"filename": f"{path}/{filename}", "type": match.groups()[0]})
