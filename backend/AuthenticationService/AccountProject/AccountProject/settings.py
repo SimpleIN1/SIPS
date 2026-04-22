@@ -251,9 +251,9 @@ DOMAIN = os.getenv("DOMAIN")
 PORT = os.getenv("PORT")
 SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
 
-MAIN_ROUTE = "api/account"
+MAIN_ROUTE = "api/vauth/account"
 AUTH_ROUTE = f"{MAIN_ROUTE}/auth"
-DOCS_ROUTE = "docs"
+DOCS_ROUTE = f"api/vauth/docs"
 
 URL_FRONTEND_404 = os.getenv("FRONTEND_404_URL")
 
