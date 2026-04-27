@@ -27,7 +27,7 @@ def make_init_request():
         'HTTP_HOST': settings.DOMAIN,
         'QUERY_STRING': '',
         'REQUEST_METHOD': 'GET',
-        'PATH_INFO': reverse_lazy("token_obtain_pair"),
+        'PATH_INFO': reverse_lazy("profile"),
         'SERVER_PORT': settings.PORT,
     })
 

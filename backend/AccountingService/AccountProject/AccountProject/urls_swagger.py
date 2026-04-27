@@ -9,9 +9,12 @@ from drf_yasg import openapi
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Документации по API сервиса аутентификации пользователей",
+        title="Документации по API сервиса регистрации пользователей",
         default_version='v1',
-        description="API аутентификации пользователей, испоьльзуя JWT токены",
+        description="API регистрации пользователей. Cодержит следующее: регистрация, "
+                    "восставновление пароля через одноразовый код, подтверждение почты по ссылке, "
+                    "при измении почтового ящие подтверждение по коду, ограниченный доступ для "
+                    "просмотра информации о пользователях.",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="serbinovichgs@ict.nsc.ru"),
         license=openapi.License(name="BSD License"),

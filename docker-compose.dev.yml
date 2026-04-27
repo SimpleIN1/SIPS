@@ -17,6 +17,25 @@ services:
       - ${PATH_TO_TILES}:/usr/src/tiles/
     command: /bin/bash -c "envsubst '$${SERVER_NAME},$${SERVER_PORT},$${SSL_CERTIFICATE_PATH},$${SSL_CERTIFICATE_KEY_PATH}' < /usr/src/app/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
+  server-account:
+    build:
+      context: .
+      dockerfile: dockerfile/backend.Dockerfile
+      target: server-account
+    restart: always
+    depends_on:
+      - postgres-auth
+    env_file:
+      - backend/AccountingService/.docker.account.postgres.env
+      - backend/AccountingService/.docker.account.env
+      - backend/AccountingService/.docker.broker.env
+    expose:
+      - "8000"
+    volumes:
+      - ./backend/AccountingService/AccountProject/:/usr/src/app/AccountProject/
+      - static-volume:/usr/src/app/AccountProject/static
+    command: bash -c '/usr/src/app/start.sh'
+
   server-auth:
     build:
       context: .
@@ -28,7 +47,6 @@ services:
     env_file:
       - backend/AuthenticationService/.docker.auth.postgres.env
       - backend/AuthenticationService/.docker.auth.env
-      - backend/AuthenticationService/.docker.broker.env
     expose:
       - "8000"
     volumes:
@@ -80,9 +98,9 @@ services:
     depends_on:
       - redis
     env_file:
-      - backend/AuthenticationService/.docker.auth.postgres.env
-      - backend/AuthenticationService/.docker.auth.env
-      - backend/AuthenticationService/.docker.broker.env
+      - backend/AccountingService/.docker.account.postgres.env
+      - backend/AccountingService/.docker.account.env
+      - backend/AccountingService/.docker.broker.env
 
   redis:
     image: redis:8.0.3
@@ -94,12 +112,15 @@ services:
   postgres-auth:
     image: postgres:17.6
     restart: unless-stopped
+    command: postgres -c config_file=/etc/postgresql.conf
     expose:
       - "5432"
     env_file:
       - backend/AuthenticationService/.docker.auth.postgres.env
     volumes:
       - auth-db-volume:/var/lib/postgresql/data/
+      - ./backend/postgresql/pg_hba.conf:/etc/postgres/pg_hba.conf
+      - ./backend/postgresql/postgresql.conf:/etc/postgresql.conf
 
   postgres-composite:
     image: postgres:17.6

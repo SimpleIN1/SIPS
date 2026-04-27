@@ -6,7 +6,9 @@ djangorestframework==3.14.0
 django[argon2]
 django[bcrypt]
 python-dotenv==0.21.0
+Celery==5.2.7
 redis==4.4.2
+Celery[redis]
 django_redis==5.2.0
 PyJWT==2.6.0
 gunicorn==20.1.0
@@ -16,3 +18,4 @@ django-rest-swagger==2.2.0
 python-dotenv==0.21.0
 drf_yasg==1.21.6
 djangorestframework-simplejwt==5.5.1
+django-rest-registration==0.9.0

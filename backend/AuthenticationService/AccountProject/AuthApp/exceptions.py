@@ -1,14 +1,5 @@
-from rest_framework import status
 from rest_framework.views import exception_handler
-
-# from rest_registration.exceptions import APIException
-from rest_framework.exceptions import APIException, NotAuthenticated, ErrorDetail
-
-
-class BadRequestError(NotAuthenticated):
-    status_code = status.HTTP_400_BAD_REQUEST
-    default_detail = "Bad request."
-    default_code = "bad_request_error"
+from rest_framework.exceptions import ErrorDetail
 
 
 def user_exception_handler(exc, context):

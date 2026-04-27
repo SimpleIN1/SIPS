@@ -58,7 +58,9 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "cacheops",
     "drf_yasg",
+    "rest_registration",
 
+    "AccountApp.apps.AccountAppConfig",
     "AuthApp.apps.AuthAppConfig"
 ]
 
@@ -108,7 +110,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'AuthApp.UserModel'
+AUTH_USER_MODEL = 'AccountApp.UserModel'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 USERNAME_FIELD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
@@ -188,7 +190,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'EXCEPTION_HANDLER': 'AuthApp.exceptions.user_exception_handler',
+    'EXCEPTION_HANDLER': 'AccountApp.exceptions.user_exception_handler',
 }
 
 SWAGGER_SETTINGS = {
@@ -250,6 +252,60 @@ DOMAIN = os.getenv("DOMAIN")
 PORT = os.getenv("PORT")
 SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
 
-MAIN_ROUTE = "api/vauth"
+MAIN_ROUTE = "api/vaccount"
 AUTH_ROUTE = f"{MAIN_ROUTE}"
 DOCS_ROUTE = f"{MAIN_ROUTE}/docs"
+
+URL_FRONTEND_404 = os.getenv("FRONTEND_404_URL")
+
+# Email settings
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT"))
+EMAIL_USE_TLS = (bool(int(os.getenv('EMAIL_USE_TLS', 1))))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
+
+# Celery settings
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+CELERY_IMPORTS = ("CeleryApp.tasks",)  # Добавлять если импорт модуей просиходит из других пакетов
+
+BROKER_URL = os.getenv("CELERY_BROKER_URL")
+BROKER_TRANSPORT_OPTIONS = {
+    'visibility_timeout': 3600
+}
+
+
+REST_REGISTRATION = {
+    'REGISTER_VERIFICATION_URL': os.getenv("FRONTEND_REGISTER_VERIFICATION_URL"),
+    'RESET_PASSWORD_VERIFICATION_URL': os.getenv("FRONTEND_RESET_PASSWORD_VERIFICATION_URL"),
+    'REGISTER_EMAIL_VERIFICATION_URL': os.getenv("FRONTEND_REGISTER_EMAIL_VERIFICATION_URL"),
+
+    'REGISTER_VERIFICATION_EMAIL_SENDER': 'AccountApp.services.notifications.send_register_verification_email_notification',
+    'RESET_PASSWORD_VERIFICATION_EMAIL_SENDER': 'AccountApp.services.notifications.send_reset_password_verification_email_notification',
+    'REGISTER_EMAIL_VERIFICATION_EMAIL_SENDER': 'AccountApp.services.notifications.send_register_email_verification_email_notification',
+
+    'RESET_PASSWORD_VERIFICATION_EMAIL_TEMPLATES': {
+        'html_body': 'mail/reset_password/body.html',
+        'subject': 'mail/reset_password/subject.txt'
+    },
+    "REGISTER_VERIFICATION_EMAIL_TEMPLATES": {
+        'html_body': 'mail/register/body.html',
+        'subject': 'mail/register/subject.txt'
+    },
+    "REGISTER_EMAIL_VERIFICATION_EMAIL_TEMPLATES": {
+        'html_body': 'mail/register_email/body.html',
+        'subject': 'mail/register_email/subject.txt'
+    },
+
+    "VERIFICATION_TEMPLATE_CONTEXT_BUILDER": "AccountApp.services.notifications.build_default_template_context",
+
+    'USER_HIDDEN_FIELDS': ('last_login', 'is_active', 'is_staff', 'is_superuser', 'user_permissions',
+                           'groups', 'date_joined', 'username'),
+    'VERIFICATION_FROM_EMAIL': os.getenv("EMAIL_HOST_USER"),
+    'USER_LOGIN_FIELDS': ["email", ],
+}
+
+OTP_CODE_TIME_MINUTES = 30
+OTP_CODE_NEXT_TIME_MINUTES = 2
