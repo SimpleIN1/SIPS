@@ -22,6 +22,9 @@ class UserModel(AbstractUser):
 
     objects = UserManagerCustom()
 
+    class Meta:
+        db_table = "user"
+
 
 class OTPUserModel(models.Model):
     NOTIFICATION_TYPE_OTP_CHOICES = (
@@ -47,3 +50,6 @@ class OTPUserModel(models.Model):
 
     def __str__(self):
         return f"OTPUserModel(opt_code={self.otp_code})"
+
+    class Meta:
+        db_table = "otp_user"

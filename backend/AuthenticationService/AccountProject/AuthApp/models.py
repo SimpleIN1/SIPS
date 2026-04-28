@@ -21,3 +21,6 @@ class UserModel(AbstractUser):
     middle_name = models.CharField(max_length=150, null=True, blank=True, verbose_name="middle_name")
 
     objects = UserManagerCustom()
+
+    class Meta:
+        db_table = "user"
