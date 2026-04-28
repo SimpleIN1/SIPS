@@ -18,6 +18,9 @@ def user_exception_handler(exc, context):
             response.data["detail"] = str(exc.detail)
         elif isinstance(exc.detail, dict):
             for key, value in exc.detail.items():
-                response.data[key] = [str(item) for item in value]
+                if isinstance(value, list):
+                    response.data[key] = [str(item) for item in value]
+                else:
+                    response.data[key] = str(value)
 
     return response
