@@ -23,7 +23,7 @@ class UserModel(AbstractUser):
     objects = UserManagerCustom()
 
     class Meta:
-        db_table = "user"
+        db_table = "auth_user"
 
 
 class OTPUserModel(models.Model):
