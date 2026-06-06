@@ -22,8 +22,8 @@ app = Flask(__name__)
 app.url_map.converters['regex'] = RegexConverter
 app.config.from_object('api.conf')
 
-if app.config["DEBUG"]:
-    migrate = Migrate(app, db)
+# if app.config["DEBUG"]:
+#     migrate = Migrate(app, db)
 
 
 # Cross Origin Resource Sharing
@@ -43,7 +43,7 @@ api = Api(
     description="Сервис предоставления информации о выходных данных "
                 "после обработки вычислительным комплексом для оперативной "
                 "обработки данных радиометра VIIRS спутников Suomi-NPP, NOAA-20",
-    schemes=["https", "http"],
+    # schemes=["http", "https"],
     terms="https://www.google.com/policies/terms/"
 )
 
@@ -65,12 +65,12 @@ app.register_blueprint(swagger_ui_blueprint)
 
 
 # Resources
-api.add_resource(DateResource, f"{conf.MAIN_ROUTE}/dates")
-api.add_resource(DateTimeResource, f"{conf.MAIN_ROUTE}/dates/<date>/times")
+api.add_resource(DateResource, f"{conf.MAIN_ROUTE}/dates/<satellite>")
+api.add_resource(DateTimeResource, f"{conf.MAIN_ROUTE}/dates/times/<satellite>/<date>")
 
 api.add_resource(CompositeResource, f"{conf.MAIN_ROUTE}/composites/<satellite>/<date>/<time>")
 
-api.add_resource(FireValueListResource, f"{conf.MAIN_ROUTE}/fire/values/<satellite>/<date>/<resolution>")
+api.add_resource(FireValueListResource, f"{conf.MAIN_ROUTE}/fire-values/<satellite>/<date>/<resolution>")
 
 api.add_resource(SatelliteListResource, f"{conf.MAIN_ROUTE}/satellites")
 api.add_resource(SatelliteResource, f"{conf.MAIN_ROUTE}/satellites/<int:id>")

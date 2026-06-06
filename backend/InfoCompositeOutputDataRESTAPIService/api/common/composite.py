@@ -26,7 +26,7 @@ class Composite(InputParams):
             .where(
                 (SatelliteModel.tag == self.satellite_tag) &
                 (DateTimeModel.datetime == combined_datetime) &
-                FileCompositeModel.access_tiles
+                FileCompositeModel.is_downloadable_tiles
             )
             .group_by(CompositeModel.name)
         )
