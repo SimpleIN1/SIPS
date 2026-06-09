@@ -30,9 +30,9 @@ class DateResource(Resource):
                         "dates": {
                             "2023": {
                                 "06": [
-                                    {1: "2023-06-27"},
-                                    {2: "2023-06-26"},
-                                    {3: "2023-06-23"}
+                                    "2023-06-27",
+                                    "2023-06-26",
+                                    "2023-06-23"
                                 ]
                             }
                         }
@@ -85,7 +85,11 @@ class DateTimeResource(Resource):
                 "examples": {
                     "application/json": {
                         "times": [
-                            "07:20"
+                            {
+                                "time": "07:20",
+                                "datetime": "2023-06-17 07:20",
+                                "id": 14
+                            }
                         ]
                     }
                 }

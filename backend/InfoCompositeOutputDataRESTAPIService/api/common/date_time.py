@@ -8,12 +8,12 @@ from api.db.models import DateTimeModel, CompositeModel, FileCompositeModel, Sat
 class DateService:
     def get_dates(self, satellite: str):
         items = db.session.execute(
-            db.select(DateTimeModel.id, func.to_char(DateTimeModel.datetime, "YYYY-MM-DD").label("date"))
+            db.select(func.to_char(DateTimeModel.datetime, "YYYY-MM-DD").label("date"))
             .select_from(FileCompositeModel)
             .join(DateTimeModel, DateTimeModel.id == FileCompositeModel.datetime_id)
             .join(SatelliteModel, SatelliteModel.id == FileCompositeModel.satellite_id)
             .where(SatelliteModel.tag == satellite)
-            .group_by(DateTimeModel.id, func.to_char(DateTimeModel.datetime, "YYYY-MM-DD").label("date"))
+            .group_by(func.to_char(DateTimeModel.datetime, "YYYY-MM-DD").label("date"))
         )
         return items
 
@@ -27,16 +27,16 @@ class DateService:
             "dates": {
                 '2023': {
                     '06': [
-                        {1: '2023-06-17'},
-                        {2: '2023-06-18'}
+                        '2023-06-17',
+                        '2023-06-18'
                     ],
                     '07': [
-                        {3: '2023-07-11'}
+                        '2023-07-11'
                     ]
                 },
                 '2024': {
                     '04': [
-                        {4: '2024-04-28'}
+                        '2024-04-28'
                     ]
                 }
             }
@@ -51,7 +51,7 @@ class DateService:
             year, month, day = tmp.split('-')
             tmp_dict.setdefault(year, {})
             tmp_dict[year].setdefault(month, [])
-            tmp_dict[year][month].append({item.id: tmp})
+            tmp_dict[year][month].append(tmp)
 
         return {"dates": tmp_dict}
 
@@ -59,16 +59,23 @@ class DateService:
 class DateTime(InputParams):
     def get_datetimes(self):
         datetimes = db.session.execute(
-            db.select(DateTimeModel.datetime)
+            db.select(DateTimeModel.id, DateTimeModel.datetime)
             .select_from(FileCompositeModel)
             .join(DateTimeModel, DateTimeModel.id == FileCompositeModel.datetime_id)
             .join(SatelliteModel, SatelliteModel.id == FileCompositeModel.satellite_id)
             .where((SatelliteModel.tag == self.satellite_tag)
                    &
                    (func.to_char(DateTimeModel.datetime, "YYYY-MM-DD") == self.date))
-            .group_by(DateTimeModel.datetime)
+            .group_by(DateTimeModel.id, DateTimeModel.datetime)
         )
         return datetimes
 
     def fetch_times(self, items):
-        return [item.datetime.strftime("%H:%M") for item in items]
+        return [
+            {
+                "time": item.datetime.strftime("%H:%M"),
+                "datetime": item.datetime.strftime("%Y-%m-%d %H:%M"),
+                "id": item.id
+            }
+            for item in items
+        ]
