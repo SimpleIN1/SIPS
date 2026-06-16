@@ -132,8 +132,20 @@ services:
     volumes:
       - composite-db-volume:/var/lib/postgresql/data
 
+  postgres-composite-data:
+    image: postgis/postgis:17-3.5
+    restart: unless-stopped
+    expose:
+      - "5432"
+    env_file:
+      - backend/CompositeDataRESTAPIService/.docker.composite-data.postgres.env
+    volumes:
+      - composite-data-db-volume:/var/lib/postgresql/data/
+
+
 volumes:
   auth-db-volume:
   composite-db-volume:
+  composite-data-db-volume:
   static-volume:
   etc-letsencrypt:

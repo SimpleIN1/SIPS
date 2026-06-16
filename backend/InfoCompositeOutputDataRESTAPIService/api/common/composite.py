@@ -32,3 +32,17 @@ class Composite(InputParams):
         )
 
         return composites
+
+
+class CompositeName:
+    def get_by_id(self, id: int):
+        return db.get_or_404(CompositeModel, id)
+
+    def get_composites(self):
+        composites = db.session.execute(
+            db.select(
+                CompositeModel.id, CompositeModel.name,
+            )
+        )
+
+        return composites

@@ -22,3 +22,5 @@
 **/celerybeat-schedule*
 
 **/DjangoAdminPanel
+**/CompositeDataRESTAPIService/trash.txt
+**/CompositeDataRESTAPIService/files/

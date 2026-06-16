@@ -1,12 +1,19 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
 from marshmallow import fields
 
-from api.db.models import SatelliteModel, DateTimeModel, FireValueModel
+from api.db.models import SatelliteModel, DateTimeModel, FireValueModel, CompositeModel
 
 
 class SatelliteSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = SatelliteModel
+        include_relationship = True
+        load_instance = True
+
+
+class CompositeNameSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = CompositeModel
         include_relationship = True
         load_instance = True
 

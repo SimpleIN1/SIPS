@@ -3,15 +3,25 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 import conf
 
-engine = create_engine(
-    conf.SQLALCHEMY_DATABASE_URI,
-    echo=conf.SQLALCHEMY_ECHO
-)
 
-SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine
-)
+class PostgreSQLBase:
 
-Base = declarative_base()
+    def __init__(self, database_uri, sqlalchemy_echo):
+        self.engine = create_engine(
+            database_uri,
+            echo=sqlalchemy_echo
+        )
+
+        self.SessionLocal = sessionmaker(
+            autocommit=False,
+            autoflush=False,
+            bind=self.engine
+        )
+
+        self.Base = declarative_base()
+
+
+composite_pbase = PostgreSQLBase(conf.SQLALCHEMY_COMPOSITE_DATABASE_URI,
+                                 conf.SQLALCHEMY_ECHO)
+composite_data_pbase = PostgreSQLBase(conf.SQLALCHEMY_COMPOSITE_DATA_DATABASE_URI,
+                                      conf.SQLALCHEMY_ECHO)

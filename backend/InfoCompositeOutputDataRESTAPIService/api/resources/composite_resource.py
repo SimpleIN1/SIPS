@@ -5,8 +5,9 @@ from webargs import fields, validate
 from webargs.flaskparser import use_args
 
 from api.common.caching import cache
-from api.common.composite import Composite
-from api.swagger.schemas_sw import CompositeSchemaSwagger
+from api.db.schemas import CompositeNameSchema
+from api.common.composite import Composite, CompositeName
+from api.swagger.schemas_sw import CompositeSchemaSwagger, CompositeNameSchemaSwagger
 from api.conf import REGEX_PARAMS_SATELLITE
 
 
@@ -84,5 +85,75 @@ class CompositeResource(Resource):
 
             if datetime.utcnow().date() - timedelta(days=15) < date and composite_list:
                 cache.set(key, cached_composites, 24 * 60 * 60)
+
+        return cached_composites
+
+
+class CompositeNameResource(Resource):
+    @swagger.doc({
+        "tags": ["Composite"],
+        "summary": "Get composite",
+        "parameters": [
+            {
+                "name": "id",
+                "description": "Composite id",
+                "in": "path",
+                "type": "integer",
+                "required": True
+            },
+        ],
+        "responses": {
+            "200": {
+                "description": "Returns a satellite by id",
+                "schema": CompositeNameSchemaSwagger,
+                "examples": {
+                    "application/json": {
+                        "id": 1,
+                        "name": "aot550",
+                    }
+                }
+            }
+        }
+     })
+    def get(self, id):
+        cn = CompositeName()
+        composite = cn.get_by_id(id)
+
+        serialized = CompositeNameSchema().dump(composite)
+
+        return serialized
+
+
+class CompositeNameListResource(Resource):
+    @swagger.doc({
+        "tags": ["Composite"],
+        "summary": "Get Composites",
+        "responses": {
+            "200": {
+                "description": "Returns a Composites",
+                "schema": CompositeNameSchemaSwagger,
+                "examples": {
+                    "application/json": [
+                        {
+                            "id": 1,
+                            "name": "aot550",
+                        },
+                        {
+                            "id": 2,
+                            "name": "clmsk",
+                        }
+                    ]
+                }
+            }
+        }
+     })
+    def get(self):
+
+        cn = CompositeName()
+        cached_composites = cache.get("composite_names")
+        if not cached_composites:
+            composites = cn.get_composites()
+            cached_composites = CompositeNameSchema(many=True).dump(composites)
+            cache.set("composite_names", cached_composites, 48 * 60 * 60)
 
         return cached_composites

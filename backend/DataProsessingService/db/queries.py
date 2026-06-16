@@ -1,37 +1,27 @@
 from sqlalchemy import select, insert
 
-from db.database import SessionLocal, engine
-from db.models import *
+from db.models import composite, composite_data
+from db.database import composite_pbase, composite_data_pbase
 
 
 class DefaultDataBaseQuery:
+    session = None
+    base = None
+    engine = None
 
     def __init__(self):
-        self.session = SessionLocal()
-
-    def create_all(self):
-        Base.metadata.create_all(engine)
+        if not self.session:
+            raise Exception("Session is empty")
+        if not self.base:
+            raise Exception("Base is empty")
+        if not self.engine:
+            raise Exception("Engine is empty")
 
     def drop_all(self):
-        Base.metadata.drop_all(bind=engine, tables=[
-            DateTimeModel.__table__,
-            CompositeModel.__table__,
-            SatelliteModel.__table__,
-            FileCompositeModel.__table__,
-            FireValueModel.__table__,
-        ])
+        raise NotImplementedError()
 
     def delete_all(self):
-        try:
-            self.session.query(FileCompositeModel).delete()
-            self.session.query(FireValueModel).delete()
-            self.session.query(SatelliteModel).delete()
-            self.session.query(CompositeModel).delete()
-            self.session.query(DateTimeModel).delete()
-            self.session.commit()
-        except Exception as e:
-            print(e)
-            self.session.rollback()
+        raise NotImplementedError()
 
     def get_or_create(self, model, **kwargs):
 
@@ -75,3 +65,55 @@ class DefaultDataBaseQuery:
         output_items = self.session.scalars(insert(model).returning(model), items)
         self.session.commit()
         return output_items
+
+
+class CompositeDataBaseQuery(DefaultDataBaseQuery):
+    session = composite_pbase.SessionLocal()
+    engine = composite_pbase.engine
+    base = composite_pbase.Base
+
+    def drop_all(self):
+        self.base.metadata.drop_all(bind=self.engine, tables=[
+            composite.DateTimeModel.__table__,
+            composite.CompositeModel.__table__,
+            composite.SatelliteModel.__table__,
+            composite.FileCompositeModel.__table__,
+            composite.FireValueModel.__table__,
+        ])
+
+    def delete_all(self):
+        try:
+            self.session.query(composite.FileCompositeModel).delete()
+            self.session.query(composite.FireValueModel).delete()
+            self.session.query(composite.SatelliteModel).delete()
+            self.session.query(composite.CompositeModel).delete()
+            self.session.query(composite.DateTimeModel).delete()
+            self.session.commit()
+        except Exception as e:
+            print(e)
+            self.session.rollback()
+
+
+class CompositeDataDataBaseQuery(DefaultDataBaseQuery):
+    session = composite_data_pbase.SessionLocal()
+    engine = composite_data_pbase.engine
+    base = composite_data_pbase.Base
+
+    def drop_all(self):
+        self.base.metadata.drop_all(bind=self.engine, tables=[
+            composite_data.DownloadHistoryModel.__table__,
+            composite_data.UserFileCompositeModel.__table__,
+            composite_data.FileCompositeModel.__table__,
+        ])
+
+    def delete_all(self):
+        try:
+            self.session.query(composite_data.UserFileCompositeModel).delete()
+            self.session.query(composite_data.DownloadHistoryModel).delete()
+            self.session.query(composite_data.FileCompositeModel).delete()
+            self.session.query(composite_data.CompositePolygonModel).delete()
+            self.session.commit()
+        except Exception as e:
+            print(e)
+            self.session.rollback()
+

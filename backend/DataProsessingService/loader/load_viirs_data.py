@@ -1,48 +1,24 @@
 import os
-import re
-import pprint
+import shutil
 import logging
 from pathlib import Path
 from datetime import datetime
 
-import shutil
+from geoalchemy2.shape import from_shape
+
 import conf
-from db.models import *
-from db.queries import DefaultDataBaseQuery
+from db.models import composite_data, composite
+from db.queries import DefaultDataBaseQuery, CompositeDataBaseQuery, CompositeDataDataBaseQuery
+from utils.geotiff_contour import get_geotiff_geo_contour, geotiff_to_polygon
 
-
-SATELLITES = {
-    "snpp": "Soumi NPP",
-    "noaa20": "NOAA-20"
-}
-SATELLITE_TAGS = {
-    "npp": "snpp",
-    "snpp": "snpp",
-    "j01": "noaa20",
-    "noaa20": "noaa20",
-}
-COMPOSITE_NAMES = (
-    "aot550", "aotaps", "clmsk", "clmsk2", "clphs",
-    "frmsk", "vievi", "vindvi", "vlst", "vscmo",
-)
-TYPE_FIRE_VALUE = {
-    "VF375": "375m",
-    "FL": "750m"
-}
 
 confirm_all = False
 
-regex = r"viirs_([a-z\d]+)_"
-pattern_composite = re.compile(regex)
+# Для одной базы
+composite_dbq = CompositeDataBaseQuery()
 
-regex_datetime = r"d(\d{8})_t(\d{4})"
-pattern_datetime = re.compile(regex_datetime)
-
-regex_v375m_v750m_fire_value = r"^(VF375|FL).+\.txt$"
-pattern_v375m_v750m_fire_value = re.compile(regex_v375m_v750m_fire_value)
-
-regex_GITCO = r"^GITCO_(\w+)_d(\d{8})_t(\d{4}).+\.h5$"
-pattern_GITCO = re.compile(regex_GITCO)
+# Дл второй базы
+composite_data_dbq = CompositeDataDataBaseQuery()
 
 
 def format_date_time(date_time: str, format: str):
@@ -53,59 +29,82 @@ def format_date_time(date_time: str, format: str):
     return datetime_fixed
 
 
-def get_and_create_composites(dbbq: DefaultDataBaseQuery):
+def get_and_create_composites():
     logging.info("Perform get and create composites")
 
-    tmp_composite_names = {item.name for item in dbbq.get_all(CompositeModel)}
-    res = set(COMPOSITE_NAMES).difference(tmp_composite_names)
+    tmp_composite_names = {item.name for item in composite_dbq.get_all(composite.CompositeModel)}
+    res = set(conf.COMPOSITE_NAMES).difference(tmp_composite_names)
     if res:
         composites = []
         for name in res:
-            composites.append(CompositeModel(name=name))
-        dbbq.bulk_insert_2(composites)
+            composites.append(composite.CompositeModel(name=name))
+        composite_dbq.bulk_insert_2(composites)
 
-    composite_obj = {item.name: item.id for item in dbbq.get_all(CompositeModel)}
+    composite_obj = {item.name: item.id for item in composite_dbq.get_all(composite.CompositeModel)}
     return composite_obj
 
 
-def get_and_create_satellites(dbbq: DefaultDataBaseQuery):
+def get_and_create_satellites():
     logging.info("Perform get and create satellites")
 
-    tmp_satellite_tags = {item.tag for item in dbbq.get_all(SatelliteModel)}
-    satellite_tags = set(SATELLITES.keys())
+    tmp_satellite_tags = {item.tag for item in composite_dbq.get_all(composite.SatelliteModel)}
+    satellite_tags = set(conf.SATELLITES.keys())
     res = set(satellite_tags).difference(tmp_satellite_tags)
     if res:
         satellites = []
         for tag in res:
-            satellites.append(SatelliteModel(tag=tag, name=SATELLITES[tag]))
-        dbbq.bulk_insert_2(satellites)
+            satellites.append(composite.SatelliteModel(tag=tag, name=conf.SATELLITES[tag]))
+        composite_dbq.bulk_insert_2(satellites)
 
-    satellites_obj = {item.tag: item.id for item in dbbq.get_all(SatelliteModel)}
+    satellites_obj = {item.tag: item.id for item in composite_dbq.get_all(composite.SatelliteModel)}
     return satellites_obj
 
 
 def create_composite_files(
-    dbbq: DefaultDataBaseQuery,
-    composite_files: list,
-    composite_names: dict,
-    satellite_id: int,
-    datetime_id: int
+        composite_files: dict,
+        composite_names: dict,
+        satellite_id: int,
+        datetime_id: int
 ):
     logging.info("Perform create composite files")
     composite_model_files = []
+    composite_data_model_files = []
 
-    for composite_filename in composite_files:
-        item = FileCompositeModel(
-            filename=composite_filename["filename"],
-            access_tiles=True,
+    filename = composite_files["clphs"]
+    contours = get_geotiff_geo_contour(filename)
+    polygon = geotiff_to_polygon(contours)
+
+    instance_polygon = composite_data_dbq.insert_data(
+        composite_data.CompositePolygonModel(polygon=from_shape(polygon))
+    )
+
+    for composite_name, filename in composite_files.items():
+        item = composite.FileCompositeModel(
+            filename=filename,
+            is_downloadable_tiles=True,
             datetime_created=datetime.now(),
             datetime_id=datetime_id,
-            composite_id=composite_names[composite_filename["type"]],
+            composite_id=composite_names[composite_name],
             satellite_id=satellite_id,
         )
         composite_model_files.append(item)
 
-    dbbq.bulk_insert_2(composite_model_files)
+        ###  Запись в composite_data_dbq
+        item1 = composite_data.FileCompositeModel(
+            filename=filename,
+            is_downloadable_tiles=True,
+            datetime_created=datetime.now(),
+            datetime_id=datetime_id,
+            composite_id=composite_names[composite_name],
+            satellite_id=satellite_id,
+            composite_polygon_id=instance_polygon.id,
+        )
+        composite_data_model_files.append(item1)
+
+        ###
+
+    composite_dbq.bulk_insert_2(composite_model_files)
+    composite_data_dbq.bulk_insert_2(composite_data_model_files)
 
 
 def fetch_datetime_satellite(gitco_filename_data: list) -> tuple:
@@ -116,19 +115,19 @@ def fetch_datetime_satellite(gitco_filename_data: list) -> tuple:
     return datetime_formatted, satellite
 
 
-def get_or_create_datetime(dbbq: DefaultDataBaseQuery, datetime_formatted) -> DateTimeModel:
+def get_or_create_datetime(datetime_formatted) -> composite.DateTimeModel:
     logging.info("Perform get or create datetime")
 
-    datetime_obj = dbbq.get_object_or_none(DateTimeModel, datetime=datetime_formatted)
+    datetime_obj = composite_dbq.get_object_or_none(composite.DateTimeModel, datetime=datetime_formatted)
     if not datetime_obj:
-        datetime_obj = dbbq.insert_data(
-            DateTimeModel(datetime=datetime_formatted)
+        datetime_obj = composite_dbq.insert_data(
+            composite.DateTimeModel(datetime=datetime_formatted)
         )
 
     return datetime_obj
 
 
-def read_fire_values(dbbq: DefaultDataBaseQuery, fire_value_filenames: list, satellite_id: int, datetime_id: int):
+def read_fire_values(fire_value_filenames: list, satellite_id: int, datetime_id: int):
     logging.info("Perform read fire values")
 
     fire_values = []
@@ -137,46 +136,45 @@ def read_fire_values(dbbq: DefaultDataBaseQuery, fire_value_filenames: list, sat
             for line in f.readlines():
                 line = line.rstrip('\n')
                 latitude, longitude, temperature, *_ = line.split(',')
-                fire_value = FireValueModel(
+                fire_value = composite.FireValueModel(
                     longitude=longitude,
                     latitude=latitude,
                     temperature=temperature,
-                    resolution=FireValueModel.RESOLUTION_SATELLITE[item["type"]],
+                    resolution=composite.FireValueModel.RESOLUTION_SATELLITE[item["type"]],
                     satellite_id=satellite_id,
                     datetime_id=datetime_id
                 )
                 fire_values.append(fire_value)
 
-    dbbq.bulk_insert_2(fire_values)
+    composite_dbq.bulk_insert_2(fire_values)
 
 
-def check_add_data(dbbq: DefaultDataBaseQuery,
-                   composite_filenames,
+def check_add_data(composite_filenames,
                    fire_value_filenames: list,
                    satellite: str,
                    datetime_formatted) -> bool:
     global confirm_all
-    print("-> Composite filenames".upper())
-    for item in composite_filenames:
-        print(f"{item['filename']}, {item['type']}")
+    print("-: Composite filenames".upper())
+    for composite_name, filename in composite_filenames.items():
+        print(f"{filename}, {composite_name}")
 
-    datetime_obj = dbbq.get_object_or_none(DateTimeModel, datetime=datetime_formatted)
+    datetime_obj = composite_dbq.get_object_or_none(composite.DateTimeModel, datetime=datetime_formatted)
     if datetime_obj:
         print("-----")
         print(f"{datetime_formatted} is exists into DataBase.")
 
-        items = list(dbbq.get_all_by_filter(FileCompositeModel, datetime_id=datetime_obj.id))
+        items = list(composite_dbq.get_all_by_filter(composite.FileCompositeModel, datetime_id=datetime_obj.id))
         print(f"Count file composite model items: {len(items)}, by datetime: {datetime_formatted}")
         for item in items:
             print(item.filename)
 
-    print("-> Fire value filenames".upper())
+    print("-: Fire value filenames".upper())
     for item in fire_value_filenames:
         print(f"{item['filename']}, {item['type']}")
 
     while answer := str(input(f"Are you continue? y/n/a/s/d(delete all) \n "
                               f"y - confirm current. \n "
-                              f"n dont confirm current. \n "
+                              f"n - dont confirm current. \n "
                               f"a - confirm all. \n "
                               f"s - stop. \n "
                               f"d - delete all.\n"
@@ -191,28 +189,28 @@ def check_add_data(dbbq: DefaultDataBaseQuery,
         elif answer.upper() == 'S':
             exit(0)
         elif answer.upper() == 'D':
-            dbbq.delete_all()
+            composite_dbq.delete_all()
+            composite_data_dbq.delete_all()
             exit(0)
 
 
-def copy_file_to_tif_dir(composite_filenames: list, datetime_formatted: datetime, satellite: str):
+def copy_file_to_tif_dir(composite_filenames: dict, datetime_formatted: datetime, satellite: str):
     date, time = datetime_formatted.strftime("%Y%m%d %H%M").split(' ')
     path = f"{conf.PATH_TO_TIF_DIRS}/{satellite}/{date}/{time}"
     Path(path).mkdir(parents=True, exist_ok=True)
-    for item in composite_filenames:
-        filename = os.path.basename(item["filename"])
+
+    for _, filename in composite_filenames.items():
+        filename = os.path.basename(filename)
         dst_path = f"{path}/{filename}"
         if not os.path.exists(dst_path):
-            shutil.copy(item["filename"], dst_path)
+            shutil.copy(filename, dst_path)
 
 
 def main():
-    dbbq = DefaultDataBaseQuery()
+    composite_names = get_and_create_composites()
+    satellites = get_and_create_satellites()
 
-    composite_names = get_and_create_composites(dbbq)
-    satellites = get_and_create_satellites(dbbq)
-
-    composite_filenames = []
+    composite_filenames = {}
     fire_value_filenames = []
     gitco_filename_data = []
 
@@ -225,29 +223,29 @@ def main():
             composite_filenames.clear()
 
             for filename in os.listdir(path):
-                if match := pattern_composite.search(filename):
-                    composite_filenames.append({"filename": f"{path}/{filename}", "type": match.groups()[0]})
-                elif match := pattern_v375m_v750m_fire_value.search(filename):
-                    type_fv = TYPE_FIRE_VALUE[match.groups()[0]]
+                if match := conf.pattern_composite.search(filename):
+                    composite_filenames[match.groups()[0]] = f"{path}/{filename}"
+                elif match := conf.pattern_v375m_v750m_fire_value.search(filename):
+                    type_fv = conf.TYPE_FIRE_VALUE[match.groups()[0]]
                     fire_value_filenames.append({"filename": f"{path}/{filename}", "type": type_fv})
-                elif match := pattern_GITCO.search(filename):
+                elif match := conf.pattern_GITCO.search(filename):
                     gitco_filename_data.append(match.groups())
 
             datetime_formatted, satellite = fetch_datetime_satellite(gitco_filename_data)
-            satellite_id = satellites[SATELLITE_TAGS[satellite]]
+            satellite_id = satellites[conf.SATELLITE_TAGS[satellite]]
             #
             if not confirm_all:
-                if not check_add_data(dbbq, composite_filenames, fire_value_filenames, satellite, datetime_formatted):
+                if not check_add_data(composite_filenames, fire_value_filenames, satellite, datetime_formatted):
                     continue
 
-            datetime_obj = get_or_create_datetime(dbbq, datetime_formatted)
+            datetime_obj = get_or_create_datetime(datetime_formatted)
 
-            read_fire_values(dbbq, fire_value_filenames, satellite_id, datetime_obj.id)
+            read_fire_values(fire_value_filenames, satellite_id, datetime_obj.id)
 
             # copeing
-            copy_file_to_tif_dir(composite_filenames, datetime_formatted, SATELLITE_TAGS[satellite])
+            copy_file_to_tif_dir(composite_filenames, datetime_formatted, conf.SATELLITE_TAGS[satellite])
 
-            create_composite_files(dbbq, composite_filenames, composite_names, satellite_id, datetime_obj.id)
+            create_composite_files(composite_filenames, composite_names, satellite_id, datetime_obj.id)
 
 
 if __name__ == '__main__':

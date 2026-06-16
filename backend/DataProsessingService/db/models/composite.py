@@ -1,7 +1,10 @@
 from sqlalchemy import DateTime, Integer, String, ForeignKey, Numeric, Boolean, SmallInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
-from db.database import Base
+from db.database import composite_pbase
+
+
+Base = composite_pbase.Base
 
 
 class DateTimeModel(Base):
@@ -50,12 +53,13 @@ class FileCompositeModel(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, unique=True)
 
     filename: Mapped[str] = mapped_column(String)
-    datetime_created: Mapped[DateTime] = mapped_column(DateTime(timezone=False))
-    access_tiles: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_downloadable_tiles: Mapped[bool] = mapped_column(Boolean, default=False)
 
     datetime_id: Mapped[int] = mapped_column(Integer, ForeignKey(f'{DateTimeModel.__tablename__}.id'))
     composite_id: Mapped[int] = mapped_column(Integer, ForeignKey(f'{CompositeModel.__tablename__}.id'))
     satellite_id: Mapped[int] = mapped_column(Integer, ForeignKey(f'{SatelliteModel.__tablename__}.id'))
+
+    datetime_created: Mapped[DateTime] = mapped_column(DateTime(timezone=False))
 
 
 class FireValueModel(Base):  # cache

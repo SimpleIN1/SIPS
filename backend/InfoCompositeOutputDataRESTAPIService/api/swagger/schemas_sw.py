@@ -17,6 +17,18 @@ class SatelliteSchemaSwagger(Schema):
     }
 
 
+class CompositeNameSchemaSwagger(Schema):
+    properties = {
+        'id': {
+            'type': 'integer',
+            'format': 'int64',
+        },
+        'name': {
+            'type': 'string'
+        },
+    }
+
+
 # DateTime resource schema
 class TimeSchemaSwagger(Schema):
     type = 'object'
