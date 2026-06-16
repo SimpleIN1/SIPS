@@ -87,6 +87,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxcb1 \
     libgl1-mesa-glx \
     libglib2.0-0 \
+    libqt5core5a \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd -s /bin/bash django-user \

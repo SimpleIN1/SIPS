@@ -86,6 +86,7 @@ services:
       - "8000"
     volumes:
       - ./backend/CompositeDataRESTAPIService/api/:/usr/src/app/api/
+       - ${PATH_TIFF_IMAGE}:${PATH_TIFF_IMAGE}
     command: bash -c '/usr/src/app/start.sh'
 
   server-docs-agregator:
