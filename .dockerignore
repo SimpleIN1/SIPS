@@ -2,6 +2,9 @@
 **/db.sqlite3
 **/celerybeat-schedule
 
+**/CompositeDataRESTAPIService/api/appsw.py
+**/CompositeDataRESTAPIService/api/testflask.py
+
 **/static/admin
 **/static/assets/images
 **/media/

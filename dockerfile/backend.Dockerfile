@@ -78,6 +78,17 @@ LABEL authors="SimpleIN1 <serbinovichgs@ict.nsc.ru>"
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+RUN sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
+    sed -i 's/security.debian.org/archive.debian.org/g' /etc/apt/sources.list && \
+    sed -i '/stretch-updates/d' /etc/apt/sources.list && \
+    sed -i '/buster-updates/d' /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libxcb1 \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN useradd -s /bin/bash django-user \
      && mkdir -p /usr/src/app/api/ \
      && chown -R django-user:django-user /usr/src/app/
@@ -99,6 +110,8 @@ COPY --chown=django-user:django-user ./backend/CompositeDataRESTAPIService/start
 RUN chmod u+x /usr/src/app/start.sh
 
 RUN chown -R django-user:django-user /usr/src/app/
+
+FROM server-composite-data AS celery-composite-data
 
 FROM python:3.9.0-slim AS server-docs-agregator
 LABEL authors="SimpleIN1 <serbinovichgs@ict.nsc.ru>"

@@ -71,6 +71,23 @@ services:
       - ./backend/InfoCompositeOutputDataRESTAPIService/api/:/usr/src/app/api/
     command: bash -c '/usr/src/app/start.sh'
 
+  server-composite-data:
+    build:
+      context: .
+      dockerfile: dockerfile/backend.Dockerfile
+      target: server-composite-data
+    restart: always
+    depends_on:
+      - postgres-composite-data
+    env_file:
+      - backend/CompositeDataRESTAPIService/.docker.composite-data.postgres.env
+      - backend/CompositeDataRESTAPIService/.docker.composite-data.env
+    expose:
+      - "8000"
+    volumes:
+      - ./backend/CompositeDataRESTAPIService/api/:/usr/src/app/api/
+    command: bash -c '/usr/src/app/start.sh'
+
   server-docs-agregator:
     build:
       context: .
@@ -84,7 +101,6 @@ services:
     expose:
       - "8000"
     volumes:
-      - ./backend/AuthenticationService/AccountProject/:/usr/src/app/AccountProject/
       - static-volume:/usr/src/app/AccountProject/static
     command: bash -c '/usr/src/app/start.sh'
 
@@ -94,13 +110,27 @@ services:
       dockerfile: dockerfile/backend.Dockerfile
       target: celery
     restart: unless-stopped
-    command: bash -c '/usr/src/app/venv/bin/celery -A CeleryApp.app worker --loglevel=debug -c 4 -n celery-worker'
+    command: bash -c '/usr/src/app/venv/bin/celery -A CeleryApp.app worker --loglevel=info -c 4 -n celery-worker'
     depends_on:
       - redis
     env_file:
       - backend/AccountingService/.docker.account.postgres.env
       - backend/AccountingService/.docker.account.env
       - backend/AccountingService/.docker.broker.env
+
+  celery-worker-composite-data:
+    build:
+      context: .
+      dockerfile: dockerfile/backend.Dockerfile
+      target: celery-composite-data
+    restart: unless-stopped
+    command: bash -c '/usr/src/app/venv/bin/celery -A api.celery.app:celery_app worker --beat --loglevel=info -c 4 -n celery-worker-coposite-data'
+    depends_on:
+      - redis
+    env_file:
+      - backend/CompositeDataRESTAPIService/.docker.composite-data.postgres.env
+      - backend/CompositeDataRESTAPIService/.docker.composite-data.env
+      - backend/CompositeDataRESTAPIService/.docker.broker.env
 
   redis:
     image: redis:8.0.3
