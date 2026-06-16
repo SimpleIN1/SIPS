@@ -1,1 +1,1 @@
-Reset password code — {{ otp_code }} was sent — {{ site_name }}
+Сброс пароля, код — {{ otp_code }}, отправлено — {{ site_name }}

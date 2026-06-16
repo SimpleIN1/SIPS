@@ -1,1 +1,1 @@
-Please verify your account — {{ site_name }}
+Подтверждение регистрации — {{ site_name }}

@@ -1,13 +1,69 @@
-{% load i18n %}{% autoescape off %}
-{% blocktranslate %}You're receiving this email because you registered your user account at {{ site_name }}.{% endblocktranslate %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Подтверждение нового адреса электронной почты</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; color: #222; background-color: #f5f7fa;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f7fa; padding: 24px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; padding: 32px;">
+          <tr>
+            <td>
+              <h2 style="margin-top: 0; color: #1f2937;">
+                Подтверждение нового адреса электронной почты
+              </h2>
 
-{% translate "Please go to the following page and confirm your email address:" %}
-{% block reset_link %}
-Code: {{ otp_code }}
-{% endblock %}
+              <p>Здравствуйте!</p>
 
-{% translate "Thanks for using our site!" %}
+              <p>
+                Вы запросили изменение адреса электронной почты для вашей учётной записи в системе <strong>{{ site_name }}</strong>.
+              </p>
 
-{% blocktranslate %}The {{ site_name }} team{% endblocktranslate %}
+              <p>
+                Для подтверждения нового адреса электронной почты введите следующий код подтверждения:
+              </p>
 
-{% endautoescape %}
+              <div style="margin: 32px 0; text-align: center;">
+                <span style="
+                  display: inline-block;
+                  padding: 16px 32px;
+                  font-size: 32px;
+                  font-weight: bold;
+                  letter-spacing: 8px;
+                  color: #2563eb;
+                  background-color: #f3f4f6;
+                  border-radius: 12px;
+                  font-family: 'Courier New', monospace;
+                ">
+                  {{ otp_code }}
+                </span>
+              </div>
+
+              <p>
+                Этот код действителен в течение <strong>{{ otp_code_time }} минут</strong>.
+              </p>
+
+              <p>
+                Если вы не запрашивали изменение адреса электронной почты,
+                проигнорируйте это письмо и обратитесь в службу поддержки,
+                если считаете, что доступ к вашей учётной записи мог быть скомпрометирован.
+              </p>
+
+              <p>
+                Никому не сообщайте данный код подтверждения.
+              </p>
+
+              <p style="margin-bottom: 0;">
+                С уважением,<br>
+                Команда {{ site_name }}
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

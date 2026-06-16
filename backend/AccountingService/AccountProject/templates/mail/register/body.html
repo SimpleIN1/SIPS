@@ -1,13 +1,56 @@
-{% load i18n %}{% autoescape off %}
-{% blocktranslate %}You're receiving this email because you registered your user account at {{ site_name }}.{% endblocktranslate %}
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Подтверждение регистрации в {{ site_name }}</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; color: #222; background-color: #f5f7fa;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f7fa; padding: 24px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; padding: 32px;">
+          <tr>
+            <td>
+              <h2 style="margin-top: 0; color: #1f2937;">Подтверждение регистрации в {{ site_name }}</h2>
 
-{% translate "Please go to the following page and confirm your email address:" %}
-{% block reset_link %}
-<a href="{{ verification_url }}">verify email</a>
-{% endblock %}
+              <p>Здравствуйте!</p>
 
-{% translate "Thanks for using our site!" %}
+              <p>
+                Вы получили это письмо, потому что был создан аккаунт в системе <strong>{{ site_name }}</strong>.
+              </p>
 
-{% blocktranslate %}The {{ site_name }} team{% endblocktranslate %}
+              <p>
+                Чтобы завершить регистрацию и активировать учетную запись, перейдите по ссылке:
+              </p>
 
-{% endautoescape %}
+              <p style="margin: 24px 0;">
+                <a href="{{ verification_url }}"
+                   style="display: inline-block; padding: 12px 18px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 8px;">
+                  Подтвердить аккаунт
+                </a>
+              </p>
+
+              <p>
+                Если кнопка не открывается, скопируйте ссылку и вставьте её в адресную строку браузера:
+              </p>
+
+              <p style="word-break: break-all; color: #2563eb;">
+                {{ verification_url }}
+              </p>
+
+              <p>
+                Если вы не создавали аккаунт в {{ site_name }}, просто проигнорируйте это письмо.
+              </p>
+
+              <p style="margin-bottom: 0;">
+                С уважением,<br>
+                команда {{ site_name }}
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

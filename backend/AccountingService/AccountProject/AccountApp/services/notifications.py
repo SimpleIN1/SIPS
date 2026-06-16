@@ -26,6 +26,7 @@ from AccountApp.views import OTPChecking
 if TYPE_CHECKING:
     from django.contrib.auth.base_user import AbstractBaseUser
 
+from django.conf import settings
 from CeleryApp.tasks import send_email_with_broker
 from AccountApp.services.code_generator import generate_code
 
@@ -123,6 +124,7 @@ def send_register_email_verification_email_notification(
         'params_signer': signer,
         'email_already_used': email_already_used,
         'otp_code': otp_code,
+        'otp_code_time': settings.OTP_CODE_TIME_MINUTES
     }
     template_config_data = _get_email_template_config_data(
         request, user, NotificationType.REGISTER_EMAIL_VERIFICATION)
@@ -154,6 +156,7 @@ def send_reset_password_verification_email_notification(
     notification_data = {
         'params_signer': signer,
         'otp_code': otp_code,
+        'otp_code_time': settings.OTP_CODE_TIME_MINUTES
     }
     send_verification_notification(
         NotificationType.RESET_PASSWORD_VERIFICATION, user, notification_data,
