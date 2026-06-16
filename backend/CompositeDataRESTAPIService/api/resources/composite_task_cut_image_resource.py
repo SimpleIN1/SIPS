@@ -85,7 +85,7 @@ class CompositeTaskCutTiffImageResource(Resource):
             {"api_key": []},
         ],
     })
-    # @jwt_required()
+    @jwt_required()
     def post(self, *args, **kwargs):
 
         serializer = CompositeTaskSerializer()

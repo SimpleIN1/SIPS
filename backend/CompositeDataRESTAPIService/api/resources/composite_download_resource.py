@@ -52,7 +52,7 @@ class CompositeDownloadResource(Resource):
             {"api_key": []},
         ],
     })
-    # @jwt_required()
+    @jwt_required()
     @use_args({
         "uid": fields.String(required=True, validate=validate.Regexp(conf.REGEX_PARAMS_URL))
     }, location="view_args")
@@ -103,7 +103,7 @@ class CompositeDownloadLinkResource(Resource):
             {"api_key": []},
         ],
     })
-    # @jwt_required()
+    @jwt_required()
     def get(self, *args, **kwargs):
         user_id = 1 if conf.TEST_USER else get_jwt().get("user_id")
         dl_service = DownloadLinkService()

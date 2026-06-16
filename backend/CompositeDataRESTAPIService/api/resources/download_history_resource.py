@@ -60,7 +60,7 @@ class CompositeDownloadHistoryResource(Resource):
             {"api_key": []},
         ],
     })
-    # @jwt_required()
+    @jwt_required()
     def get(self, *args, **kwargs):
         user_id = 1 if conf.TEST_USER else get_jwt().get("user_id")
         page = int(request.args.get("page"))

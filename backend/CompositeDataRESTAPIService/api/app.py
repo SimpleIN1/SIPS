@@ -57,7 +57,7 @@ api = Api(
             "description": "Input example: \"Bearer \<Your token\>\"",
         }
     },
-    schemes=["http", "https"],
+    schemes=["https", "http"],
 )
 
 
