@@ -7,9 +7,17 @@ default_error_messages_serializer = {
 }
 
 
-class TokenObtainPairSerializerJWT(TokenObtainPairSerializer):
+class TokenAppendField:
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['email'] = user.email
+        return token
+
+
+class TokenObtainPairSerializerJWT(TokenAppendField, TokenObtainPairSerializer):
     default_error_messages = default_error_messages_serializer
 
 
-class TokenRefreshSerializerJWT(TokenRefreshSerializer):
+class TokenRefreshSerializerJWT(TokenAppendField, TokenRefreshSerializer):
     default_error_messages = default_error_messages_serializer
