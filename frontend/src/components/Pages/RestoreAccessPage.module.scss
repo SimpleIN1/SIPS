@@ -1,0 +1,233 @@
+.page {
+  min-height: 100vh;
+  background: #f5f7ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.back {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+}
+
+.card {
+  width: 480px;
+  max-width: 100%;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 14px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  padding: 22px 22px 26px;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #d9d9d9;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  color: #2f66ff;
+  background: #ffffff;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 8px 0 6px;
+  color: #111827;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 18px;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.input {
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid #d9d9d9;
+  padding: 0 12px;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+}
+
+.input:focus {
+  border-color: #2f66ff;
+  box-shadow: 0 0 0 3px rgba(47, 102, 255, 0.18);
+}
+
+/* ====== ШИРОКИЕ ПОЛЯ ДЛЯ ПАРОЛЯ ====== */
+
+.inputWide {
+  height: 44px;
+  border-radius: 10px;
+  border: 1px solid #d9d9d9;
+  padding: 0 12px;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+}
+
+.inputWide:focus {
+  border-color: #2f66ff;
+  box-shadow: 0 0 0 3px rgba(47, 102, 255, 0.18);
+}
+
+/* ====== БЛОК ПАРОЛЯ С ГЛАЗИКОМ ====== */
+
+.passRow {
+  position: relative;
+  width: 100%;
+}
+
+.eyeBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* ====== КОД ИЗ 6 ЦИФР ====== */
+
+.codeRow {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 18px 0 20px;
+}
+
+.codeBox {
+  width: 56px;
+  height: 56px;
+  border: 2px solid #111827;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 22px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.codeBox:focus {
+  border-color: #2f66ff;
+}
+
+/* ====== КНОПКИ ====== */
+
+.primaryBtnWide {
+  height: 48px;
+  border: none;
+  border-radius: 10px;
+  background: #2f66ff;
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 6px;
+  width: 100%;
+  transition: 0.2s;
+}
+
+.primaryBtnWide:hover {
+  background: #1f55e6;
+}
+
+.primaryBtnWide:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ====== СООБЩЕНИЯ ====== */
+
+.error {
+  border: 1px solid #fecaca;
+  background: #fff1f2;
+  color: #991b1b;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.ok {
+  border: 1px solid #bbf7d0;
+  background: #ecfdf5;
+  color: #065f46;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+/* ====== ТЕКСТ С ПОЧТОЙ ====== */
+
+.infoLine {
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+/* ====== АДАПТИВ ====== */
+
+@media (max-width: 520px) {
+  .card {
+    padding: 18px 16px 20px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .codeBox {
+    width: 46px;
+    height: 46px;
+  }
+
+  .back {
+    left: 14px;
+    top: 14px;
+  }
+}

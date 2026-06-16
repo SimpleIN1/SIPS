@@ -1,0 +1,101 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800;900&family=Poppins&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Nunito", sans-serif;
+  box-sizing: border-box;
+}
+
+.leftbar{
+  position: relative;
+  min-width: 479px;
+  .btns{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    padding: 9px;
+    justify-content: space-between;
+    button{
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .headerbtn{
+      width: 40px;
+      height: 40px;
+    }
+  }
+  
+
+
+  .searchbtn{
+    //position: absolute;
+    z-index: 3000;
+    top: 9px;
+    right: 9px;
+    height: 50px;
+    width: 100px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 10px;
+    background-color: rgba(147, 112, 219);
+    padding: 8px;
+    cursor: pointer;
+  }
+
+  .setttab{
+    padding: 9px;
+    margin-top: 10px;
+    color: gray;
+    border-bottom: 2px lightgray solid;
+  }
+
+  .btnstab{
+    display: grid;
+    grid-template-columns: 3fr 3fr 1fr;
+    height: 40px;
+    align-items: center;
+    margin: 5px 0;
+
+    .sortbtn{
+      background: none;
+      height: 40px;
+      border: none;
+      cursor: pointer;
+      border-right: 2px lightgray solid;
+      &:hover{
+        background: lightgray;
+
+      }
+    }
+    .choseallbtn{
+      height: 40px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-right: 2px lightgray solid;
+      cursor: pointer;
+      &:hover{
+        background: lightgray;
+
+      }
+    }
+    .downloadbtn{
+      cursor: pointer;
+      height: 40px;
+      background: none;
+      border: none;
+      &:hover{
+        background: lightgray;
+
+      }
+    }
+  }
+  .catalogitems{
+    border-top:  2px solid lightgray;
+  }
+}
+
+
+

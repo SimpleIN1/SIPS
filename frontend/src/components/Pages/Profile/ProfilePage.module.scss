@@ -1,0 +1,382 @@
+.page {
+  padding: 40px 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  background: #f8fafc;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr) 260px;
+  gap: 50px;
+  align-items: flex-start;
+}
+
+/* Режим истории: история широкая слева, меню справа */
+.historyMode {
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 60px;
+}
+
+.mainSectionHistory {
+  width: 100%;
+  max-width: none;
+}
+
+/* ===================== АВАТАР ===================== */
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.avatarBig {
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 6px solid white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  background: #f1f5f9;
+}
+
+.avatarBig img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarFallbackBig {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: white;
+  font-size: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.uploadLabel,
+.deleteBtn {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.uploadLabel {
+  background: #2563eb;
+  color: white;
+  border: none;
+
+  &:hover {
+    background: #1d4ed8;
+  }
+
+  input {
+    display: none;
+  }
+}
+
+.deleteBtn {
+  background: #fee2e2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+
+  &:hover {
+    background: #fecaca;
+  }
+}
+
+/* ===================== ОСНОВНАЯ ЧАСТЬ ===================== */
+
+.mainSection {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  min-width: 0;
+}
+
+.section {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+}
+
+.sectionTitle {
+  font-size: 21px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #0f172a;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.input {
+  padding: 13px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+
+  &:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    outline: none;
+  }
+}
+
+.saveBtn {
+  width: 100%;
+  padding: 15px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: #1d4ed8;
+  }
+
+  &:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+  }
+}
+
+/* ===================== СООБЩЕНИЯ ===================== */
+
+.successMsg,
+.errorMsg {
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.successMsg {
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.errorMsg {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* ===================== САЙДБАР ===================== */
+
+.sidebar {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.sidebarItem {
+  padding: 14px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #64748b;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #f1f5f9;
+    color: #2563eb;
+  }
+}
+
+.sidebarItemActive {
+  color: #2563eb;
+  font-weight: 700;
+  background: #eff6ff;
+}
+
+.logout {
+  color: #ef4444;
+  margin-top: 12px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #fef2f2;
+  }
+}
+
+/* ===================== ИСТОРИЯ СКАЧИВАНИЙ ===================== */
+
+.historySection {
+  width: 100%;
+  padding-top: 16px;
+}
+
+.historyHeader {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 36px;
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 26px;
+  color: #222;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.historyRow {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 36px;
+  color: #2f66d0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.historyRow div:last-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 60px;
+  color: #8a8a8a;
+  font-size: 16px;
+}
+
+.pagination button {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  font-size: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Исправление высоты стрелок */
+.pagination button {
+  line-height: 1;
+}
+
+.activePage {
+  color: #222;
+  font-weight: 600;
+}
+
+/* ===================== АДАПТИВ ===================== */
+
+@media (max-width: 1100px) {
+  .content,
+  .historyMode {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .sidebar {
+    position: static;
+  }
+
+  .historyHeader,
+  .historyRow {
+    grid-template-columns: 120px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .page {
+    padding: 24px 16px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .historyHeader,
+  .historyRow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .historyRow {
+    font-size: 16px;
+  }
+
+  .historyRow div:last-child {
+    white-space: normal;
+  }
+}
+
+.historyState {
+  margin-top: 32px;
+  font-size: 18px;
+  color: #64748b;
+}
+
+.emptyHistory {
+  margin-top: 32px;
+  font-size: 18px;
+  color: #64748b;
+}
+
+.historyError {
+  margin-top: 32px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-weight: 500;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

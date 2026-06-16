@@ -1,0 +1,67 @@
+//@import url("~leaflet/dist/leaflet.css");
+
+.mapPage {
+  position: relative;
+  width: 100%;
+  height: calc(100dvh - 76px);
+  overflow: hidden;
+}
+
+.leafletMap,
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+body:has(.mapPage) {
+  overflow: hidden;
+}
+
+.leaflet-control-attribution {
+  display: none;
+}
+
+/* Зум переносим вправо, чтобы он не был под боковой панелью */
+.leaflet-top.leaflet-left {
+  top: 18px !important;
+  left: auto !important;
+  right: 20px !important;
+}
+
+.leaflet-control-zoom {
+  margin: 0 !important;
+  border: 2px solid rgba(0, 98, 255, 0.3) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.leaflet-control-zoom a {
+  width: 38px !important;
+  height: 38px !important;
+  line-height: 38px !important;
+  font-size: 22px !important;
+  color: #1f2937 !important;
+}
+
+.txt {
+  position: relative;
+  z-index: 1000;
+  background-color: rgb(249, 247, 247);
+  width: 50px;
+  margin-left: 1480px;
+  margin-top: 447px;
+}
+
+.txt p {
+  color: rgb(111, 111, 250);
+}
+
+.calendar {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 130px;
+  bottom: 9px;
+  z-index: 3000;
+}

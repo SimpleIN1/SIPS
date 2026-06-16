@@ -1,0 +1,81 @@
+.header {
+  background-color: #989898;
+  //color: #ffffff;
+  padding: 10px 0;
+  border: 1px solid #26292d;
+  letter-spacing: normal;
+}
+.container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 auto;
+  padding: 0 15px;
+  max-width: 1200px;
+}
+.logo {
+  font-family: "Inter", sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #2f66ff;
+  text-decoration: none;
+}
+.navbar {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 10px;
+  column-gap: 40px;
+  font-size: 16px;
+  font-weight: 400;
+
+  a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+  }
+
+  &__item {
+    position: relative; /* Добавляем позиционирование для корректной работы псевдоэлемента */
+    cursor: pointer;
+    list-style: none;
+    background: none;
+    border: none;
+
+    &:hover,
+    &:active {
+      opacity: 0.8;
+      transition: 0.5s;
+    }
+  }
+  &__link {
+    transition: opacity 0.2s ease-in;
+    &--active {
+      position: relative;
+      &::before {
+        content: "";
+        position: absolute;
+        top: 100%;
+        display: block;
+        height: 2px;
+        width: 100%;
+        background-color: rgb(91, 0, 107);
+      }
+    }
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.navbar__item {
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  list-style: none;
+  text-align: center;
+  height: 50px;
+  line-height: 50px;
+}

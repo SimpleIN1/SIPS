@@ -1,0 +1,222 @@
+.block {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.calendar {
+  width: 100%;
+  max-width: 100%;
+  padding: 10px;
+  background: white;
+  border-radius: 14px;
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.currentInfo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.monthButton,
+.yearButton,
+.navBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #1f2937;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 4px 6px;
+}
+
+.monthButton:hover,
+.yearButton:hover,
+.navBtn:hover {
+  background: #eef2ff;
+  color: #2563eb;
+}
+
+.navBtn {
+  width: 28px;
+  height: 28px;
+  font-size: 22px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.day {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.normalday {
+  position: relative;
+  width: 100%;
+  height: 27px;
+  font-size: 13px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: transparent;
+  color: #111827;
+}
+
+.normalday:hover:not(.daygreen):not(.selecteddate):not(.selectedGreenDate) {
+  background: #eef2ff;
+  transform: scale(1.04);
+}
+
+/* Выбранная дата БЕЗ данных */
+.selecteddate {
+  background: #2563eb;
+  color: white;
+  font-weight: 800;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+}
+
+/* Дата, на которую есть данные */
+.daygreen {
+  background: #22c55e;
+  color: white;
+  font-weight: 800;
+  box-shadow: 0 3px 8px rgba(34, 197, 94, 0.35);
+}
+
+/* Выбранная дата, на которую есть данные */
+.selectedGreenDate {
+  background: #22c55e;
+  color: white;
+  font-weight: 900;
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 2px #ffffff,
+    0 0 0 5px #14532d,
+    0 6px 14px rgba(34, 197, 94, 0.55);
+}
+
+.selectedGreenDate::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.selecteddate::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.notthatmonth {
+  opacity: 0.25;
+}
+
+.monthPicker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.monthItem,
+.monthItemActive,
+.yearItem,
+.yearItemActive {
+  padding: 7px 4px;
+  text-align: center;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.monthItem,
+.yearItem {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.monthItem:hover,
+.yearItem:hover {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.monthItemActive,
+.yearItemActive {
+  background: #2563eb;
+  color: white;
+}
+
+.yearPicker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+@media (max-height: 720px) {
+  .calendar {
+    padding: 8px;
+  }
+
+  .normalday {
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .header {
+    margin-bottom: 8px;
+  }
+
+  .monthItem,
+  .monthItemActive,
+  .yearItem,
+  .yearItemActive {
+    padding: 5px 3px;
+    font-size: 11px;
+  }
+}

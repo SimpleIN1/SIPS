@@ -1,0 +1,444 @@
+.root {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(47, 102, 255, 0.08), transparent 28%),
+    radial-gradient(circle at 88% 18%, rgba(21, 88, 200, 0.07), transparent 30%),
+    linear-gradient(180deg, #f8fbff 0%, #ffffff 42%, #ffffff 100%);
+  color: #111827;
+}
+
+/* ===== HERO ===== */
+
+.hero {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 42px 40px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 46px;
+}
+
+.heroLeft {
+  max-width: 440px;
+}
+
+.heroText {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.55;
+  color: #374151;
+  margin: 0;
+}
+
+.heroRight {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.heroTitle {
+  margin: 0;
+  font-family: "SouthGhetto", sans-serif;
+  font-size: 52px;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.5px;
+  color: #111827;
+}
+
+/* ===== SECTION TITLES ===== */
+
+.sectionBigTitle,
+.featuresTitle {
+  margin: 0;
+  text-align: center;
+  font-family: "SouthGhetto", sans-serif;
+  font-size: 42px;
+  font-weight: 400;
+  letter-spacing: 0.9px;
+  line-height: 1.1;
+  color: #111827;
+  transform: scale(0.97);
+}
+
+.featuresTitle {
+  margin-bottom: 26px;
+}
+
+/* ===== FEATURES ===== */
+
+.features {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 18px 40px 24px;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.featureCard {
+  position: relative;
+  min-height: 150px;
+  padding: 22px 22px 24px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(37, 99, 235, 0.12);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-4px);
+  border-color: rgba(47, 102, 255, 0.4);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.11);
+}
+
+.featureCard::after {
+  content: "";
+  position: absolute;
+  right: -34px;
+  top: -34px;
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background: rgba(47, 102, 255, 0.08);
+}
+
+.featureNumber {
+  font-family: "SouthGhetto", sans-serif;
+  font-size: 18px;
+  color: #2f66ff;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.featureTitle {
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.featureText {
+  font-family: "Inter", sans-serif;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #475569;
+}
+
+/* ===== PRODUCTS + CAROUSEL ===== */
+
+.products {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 34px 18px 12px;
+}
+
+.track {
+  margin-top: 22px;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 10px 4px 20px;
+
+  scrollbar-width: none;
+}
+
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  position: relative;
+  scroll-snap-align: start;
+  flex: 0 0 calc((100% - 40px) / 3);
+  min-width: 300px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 24px 22px 24px;
+  min-height: 235px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+
+.cardAccent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  background: var(--accent);
+}
+
+.cardHeader {
+  margin-bottom: 16px;
+}
+
+.cardTitle {
+  font-family: "SouthGhetto", sans-serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.1;
+}
+
+.cardCategory {
+  margin-top: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cardText {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #374151;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.dot,
+.dotActive {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: #cbd5e1;
+  padding: 0;
+}
+
+.dotActive {
+  background: #2f66ff;
+}
+
+/* ===== GUIDE ===== */
+
+.guide {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 60px 40px 50px;
+}
+
+.steps {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 28px 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+.step:nth-child(1) {
+  margin-left: 0;
+}
+
+.step:nth-child(2) {
+  margin-left: 120px;
+}
+
+.step:nth-child(3) {
+  margin-left: 240px;
+}
+
+.step:nth-child(4) {
+  margin-left: 360px;
+}
+
+.step:last-child {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.stepNum {
+  font-size: 56px;
+  font-family: "SouthGhetto", sans-serif;
+  font-weight: 700;
+  color: #2f66ff;
+  line-height: 1;
+  text-align: center;
+}
+
+.stepText {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: #334155;
+  max-width: 620px;
+  padding-top: 8px;
+}
+
+.toMapBtn {
+  margin: 32px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 420px;
+  height: 56px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2f66ff, #1e4fd1);
+  color: #ffffff;
+  text-decoration: none;
+  font-family: "SouthGhetto", sans-serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  box-shadow: 0 8px 25px rgba(47, 102, 255, 0.35);
+  transition: all 0.3s ease;
+}
+
+.toMapBtn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(47, 102, 255, 0.45);
+}
+
+/* ===== FOOTER ===== */
+
+.footer {
+  position: relative;
+  margin-top: 24px;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.footer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image: url("../../../assets/images/Rectangle.png");
+  background-size: cover;
+  background-position: center;
+
+  filter: brightness(0.35);
+  z-index: 0;
+}
+
+.footerInner {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.footerTitle {
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.footerLink {
+  display: inline-block;
+  margin-top: 12px;
+  color: #ffffff;
+  text-decoration: underline;
+  font-size: 15px;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.footerLink:hover {
+  opacity: 1;
+  color: #a5b4fc;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 980px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .heroRight {
+    justify-content: flex-start;
+  }
+
+  .features {
+    padding: 18px 28px 24px;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    flex: 0 0 calc((100% - 18px) / 2);
+  }
+
+  .step {
+    margin-left: 0 !important;
+    grid-template-columns: 60px 1fr;
+    gap: 12px;
+  }
+
+  .stepNum {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 560px) {
+  .sectionBigTitle,
+  .featuresTitle {
+    font-size: 32px;
+  }
+
+  .hero {
+    padding: 32px 22px 18px;
+  }
+
+  .heroTitle {
+    font-size: 38px;
+  }
+
+  .features {
+    padding: 16px 22px 20px;
+  }
+
+  .card {
+    flex: 0 0 100%;
+  }
+
+  .footerInner {
+    grid-template-columns: 1fr;
+  }
+}
