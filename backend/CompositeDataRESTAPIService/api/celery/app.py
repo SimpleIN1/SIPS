@@ -16,7 +16,7 @@ def celery_init_app(app: Flask):
             with app.app_context():
                 return self.run(*args, **kwargs)
 
-    celery_app = Celery(app.name, task_cls=FlaskTask)
+    celery_app = Celery(app.name, task_cls=FlaskTask, broker=conf.broker_url, backend=conf.result_backend)
     celery_app.config_from_object('api.conf')
     celery_app.set_default()
 

@@ -100,4 +100,7 @@ class CompositeSearchResource(Resource):
         cs = CompositeSearchService()
         images = cs.search(cs_data.points, cs_data.datetimes, cs_data.satellites, cs_data.composites)
 
+        if not images:
+            abort(404, message="Images not found")
+
         return {"images": CompositeImageSerializer(many=True).dump(images)}

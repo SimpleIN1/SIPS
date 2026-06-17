@@ -82,6 +82,7 @@ services:
     env_file:
       - backend/CompositeDataRESTAPIService/.docker.composite-data.postgres.env
       - backend/CompositeDataRESTAPIService/.docker.composite-data.env
+      - backend/CompositeDataRESTAPIService/.docker.broker.env
     expose:
       - "8000"
     volumes:
@@ -89,7 +90,7 @@ services:
       - type: bind
         source: ${PATH_TIFF_IMAGE}
         target: ${PATH_TIFF_IMAGE}
-
+      - composite-data-files:/usr/src/app/api/files
     command: bash -c '/usr/src/app/start.sh'
 
   server-docs-agregator:
@@ -135,7 +136,11 @@ services:
       - backend/CompositeDataRESTAPIService/.docker.composite-data.postgres.env
       - backend/CompositeDataRESTAPIService/.docker.composite-data.env
       - backend/CompositeDataRESTAPIService/.docker.broker.env
-
+    volumes:
+      - type: bind
+        source: ${PATH_TIFF_IMAGE}
+        target: ${PATH_TIFF_IMAGE}
+      - composite-data-files:/usr/src/app/api/files
   redis:
     image: redis:8.0.3
     restart: always
@@ -181,5 +186,6 @@ volumes:
   auth-db-volume:
   composite-db-volume:
   composite-data-db-volume:
+  composite-data-files:
   static-volume:
   etc-letsencrypt:

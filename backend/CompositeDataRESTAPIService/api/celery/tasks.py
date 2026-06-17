@@ -46,6 +46,7 @@ def cut_tiff_images_by_points(byte_stream):
     composite_files = ccs_service.get_composites(datetimes, composites, satellites)
 
     if not composite_files:
+        logging.info("composite_files not found")
         return
 
     unicue_sequence = generate_sequence()
@@ -100,7 +101,8 @@ def cut_tiff_images_by_points(byte_stream):
         except Exception as e:
             cddbq.session.rollback()
             logging.error(f"Session rollback {e}")
-        else:
-            recipient = ctc_item.email
-            links = [make_link(token, is_add_resource=True) for token in tokens]
-            SendLinksEmail().send_message(recipient=recipient, links=links, link_names=cutting_filenames)
+            break
+    else:
+        recipient = ctc_item.email
+        links = [make_link(token, is_add_resource=True) for token in tokens]
+        SendLinksEmail().send_message(recipient=recipient, links=links, link_names=cutting_filenames)

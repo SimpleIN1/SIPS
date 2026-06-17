@@ -57,7 +57,7 @@ POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "1234")
 
 SQLALCHEMY_DATABASE_URI = (f"postgresql://{POSTGRES_USER}:"
                            f"{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}")
-SQLALCHEMY_ECHO = True
+SQLALCHEMY_ECHO = False
 
 
 # conf caching
@@ -74,7 +74,7 @@ JWT_IDENTITY_CLAIM = "exp"
 
 # celery settings
 broker_url = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/1')
-result_backend = os.getenv('CELERY_RESULT_BACKED', 'redis://localhost:6379/1')
+result_backend = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/1')
 task_ignore_result = True
 broker_connection_retry_on_startup = True
 
