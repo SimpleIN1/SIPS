@@ -22,7 +22,7 @@ from rest_framework.urls import path
 
 
 urlpatterns = [
-    path(f'admin/', admin.site.urls),
+    path(f'{conf.MAIN_ROUTE}/admin/', admin.site.urls),
     path(f'{conf.DOCS_ROUTE}/swagger/', include("AccountProject.urls_swagger")),
     path(f'{conf.MAIN_ROUTE}/', include("AccountApp.urls")),
 ]
