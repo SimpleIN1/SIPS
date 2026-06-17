@@ -16,6 +16,9 @@ class CompositePolygonModel(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, unique=True)
     polygon = Column(Geometry("MultiPolygon", srid=4326))
 
+    def __repr__(self):
+        return f"<CompositePolygon {self.id}>"
+
 
 class FileCompositeModel(Base):
     """
@@ -49,16 +52,39 @@ class UserFileCompositeModel(Base):
 
     __tablename__ = "user_file_composite"
 
-    uid: Mapped[str] = mapped_column(String, primary_key=True, unique=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, unique=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(Integer)
     file_composite_id: Mapped[str] = mapped_column(Integer, ForeignKey(f'{FileCompositeModel.__tablename__}.id'))
     filename: Mapped[str] = mapped_column(String)
     polygon = Column(Geometry("POLYGON"))
     datetime_expiration: Mapped[DateTime] = mapped_column(DateTime(timezone=False))
     datetime_created: Mapped[DateTime] = mapped_column(DateTime(timezone=False))
+    deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     def __repr__(self):
         return f"<UserFileComposite {self.uid}>"
+
+
+class DownloadLinkModel(Base):
+    """
+    Stores the user's download links
+    """
+
+    __tablename__ = "download_link"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, unique=True)
+    token: Mapped[str] = mapped_column(String, unique=True)
+    file_composite_id: Mapped[str] = mapped_column(
+        Integer, ForeignKey(f'{FileCompositeModel.__tablename__}.id'), nullable=True)
+    user_file_composite_id: Mapped[str] = mapped_column(
+        Integer, ForeignKey(f'{UserFileCompositeModel.__tablename__}.id'), nullable=True)
+    user_id: Mapped[int] = mapped_column(Integer)
+    datetime_expiration: Mapped[DateTime] = mapped_column(DateTime(timezone=False))
+    datetime_created: Mapped[DateTime] = mapped_column(DateTime(timezone=False))
+    deleted: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    def __repr__(self):
+        return f"<DownloadLink {self.id}>"
 
 
 class DownloadHistoryModel(Base):
@@ -70,8 +96,7 @@ class DownloadHistoryModel(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, unique=True)
     user_id: Mapped[int] = mapped_column(Integer)
-    file_composite_id: Mapped[str] = mapped_column(Integer, ForeignKey(f'{FileCompositeModel.__tablename__}.id'))
-    user_polygon: Mapped[bool] = mapped_column(Boolean, default=False)
+    download_link_id: Mapped[str] = mapped_column(Integer, ForeignKey(f'{DownloadLinkModel.__tablename__}.id'))
     datetime_created: Mapped[DateTime] = mapped_column(DateTime(timezone=False))
 
     def __repr__(self):
