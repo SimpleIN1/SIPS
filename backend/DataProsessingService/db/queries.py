@@ -102,8 +102,10 @@ class CompositeDataDataBaseQuery(DefaultDataBaseQuery):
     def drop_all(self):
         self.base.metadata.drop_all(bind=self.engine, tables=[
             composite_data.DownloadHistoryModel.__table__,
+            composite_data.DownloadLinkModel.__table__,
             composite_data.UserFileCompositeModel.__table__,
             composite_data.FileCompositeModel.__table__,
+            composite_data.CompositePolygonModel.__table__
         ])
 
     def delete_all(self):
