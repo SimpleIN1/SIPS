@@ -10,7 +10,7 @@ import conf
 from db.models import composite_data, composite
 from db.queries import DefaultDataBaseQuery, CompositeDataBaseQuery, CompositeDataDataBaseQuery
 from utils.geotiff_contour import get_geotiff_geo_contour, geotiff_to_polygon
-
+from utils.mkdir import make_directory
 
 confirm_all = False
 
@@ -63,6 +63,7 @@ def get_and_create_satellites():
 def create_composite_files(
         composite_files: dict,
         composite_names: dict,
+        path_save: str,
         satellite_id: int,
         datetime_id: int
 ):
@@ -79,8 +80,12 @@ def create_composite_files(
     )
 
     for composite_name, filename in composite_files.items():
+
+        base_filename = os.path.basename(filename)
+        name = os.path.join(path_save, base_filename)
+
         item = composite.FileCompositeModel(
-            filename=filename,
+            filename=name,
             is_downloadable_tiles=True,
             datetime_created=datetime.now(),
             datetime_id=datetime_id,
@@ -91,7 +96,7 @@ def create_composite_files(
 
         ###  Запись в composite_data_dbq
         item1 = composite_data.FileCompositeModel(
-            filename=filename,
+            filename=name,
             is_downloadable_tiles=True,
             datetime_created=datetime.now(),
             datetime_id=datetime_id,
@@ -194,14 +199,18 @@ def check_add_data(composite_filenames,
             exit(0)
 
 
-def copy_file_to_tif_dir(composite_filenames: dict, datetime_formatted: datetime, satellite: str):
+def make_path_save(satellite: str, datetime_formatted: datetime):
     date, time = datetime_formatted.strftime("%Y%m%d %H%M").split(' ')
     path = f"{conf.PATH_TO_TIF_DIRS}/{satellite}/{date}/{time}"
-    Path(path).mkdir(parents=True, exist_ok=True)
+    make_directory(path)
 
+    return path
+
+
+def copy_file_to_tif_dir(composite_filenames: dict, path_save: str):
     for _, filename in composite_filenames.items():
         filename = os.path.basename(filename)
-        dst_path = f"{path}/{filename}"
+        dst_path = f"{path_save}/{filename}"
         if not os.path.exists(dst_path):
             shutil.copy(filename, dst_path)
 
@@ -233,6 +242,8 @@ def main():
 
             datetime_formatted, satellite = fetch_datetime_satellite(gitco_filename_data)
             satellite_id = satellites[conf.SATELLITE_TAGS[satellite]]
+
+            path_save = make_path_save(conf.SATELLITE_TAGS[satellite], datetime_formatted)
             #
             if not confirm_all:
                 if not check_add_data(composite_filenames, fire_value_filenames, satellite, datetime_formatted):
@@ -243,9 +254,9 @@ def main():
             read_fire_values(fire_value_filenames, satellite_id, datetime_obj.id)
 
             # copeing
-            copy_file_to_tif_dir(composite_filenames, datetime_formatted, conf.SATELLITE_TAGS[satellite])
+            copy_file_to_tif_dir(composite_filenames, path_save)
 
-            create_composite_files(composite_filenames, composite_names, satellite_id, datetime_obj.id)
+            create_composite_files(composite_filenames, composite_names, path_save, satellite_id, datetime_obj.id)
 
 
 if __name__ == '__main__':

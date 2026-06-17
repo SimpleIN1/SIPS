@@ -27,3 +27,4 @@
 **/CompositeDataRESTAPIService/files/
 **/CompositeDataRESTAPIService/api/appsw.py
 **/CompositeDataRESTAPIService/api/testflask.py
+**/DataProsessingService/loader/copy_from_outdata.py
