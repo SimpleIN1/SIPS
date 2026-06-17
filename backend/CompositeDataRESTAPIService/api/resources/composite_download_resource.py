@@ -109,4 +109,7 @@ class CompositeDownloadLinkResource(Resource):
         dl_service = DownloadLinkService()
         links = dl_service.get_links(user_id)
 
+        if not links:
+            abort(404, message="Links not found")
+
         return {"links": DownloadLinkSerializer(many=True).dump(links)}
