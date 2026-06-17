@@ -90,7 +90,7 @@ services:
       - type: bind
         source: ${PATH_TIFF_IMAGE}
         target: ${PATH_TIFF_IMAGE}
-      - composite-data-files:/usr/src/app/api/files
+      - composite-data-files:/usr/src/app/files
     command: bash -c '/usr/src/app/start.sh'
 
   server-docs-agregator:
@@ -140,7 +140,7 @@ services:
       - type: bind
         source: ${PATH_TIFF_IMAGE}
         target: ${PATH_TIFF_IMAGE}
-      - composite-data-files:/usr/src/app/api/files
+      - composite-data-files:/usr/src/app/files
   redis:
     image: redis:8.0.3
     restart: always
