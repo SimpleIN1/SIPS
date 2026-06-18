@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./Header.module.scss";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { headerLinksAuth, headerLinksNotAuth } from "@/data/links";
@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "@/hooks/hook";
 import { logoutUser } from "@/store/user/user-actions";
 import ivtLogo from "@/assets/ivt-logo.svg";
 import sipsLogo from "@/assets/sips-logo.svg";
+import avatarPlaceholder from "@/assets/avatar-placeholder.webp";
 import { ConfirmLogoutModal } from "@/components/ConfirmLogoutModal/ConfirmLogoutModal";
 import AuthService from "@/service/auth-service";
 
@@ -13,6 +14,7 @@ type HeaderProfile = {
   first_name?: string;
   email?: string;
 } | null;
+
 const Header = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -20,8 +22,8 @@ const Header = () => {
 
   const isAuth = useAppSelector((state) => state.user.isAuth);
   const user = useAppSelector((state) => state.user.user);
-  const [profileUser, setProfileUser] = useState<HeaderProfile>(null);
 
+  const [profileUser, setProfileUser] = useState<HeaderProfile>(null);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -29,7 +31,13 @@ const Header = () => {
   useEffect(() => {
     const loadPhoto = () => {
       const saved = localStorage.getItem("userPhoto");
-      setPhotoUrl(saved);
+
+      if (saved?.startsWith("data:image/")) {
+        setPhotoUrl(saved);
+        return;
+      }
+
+      setPhotoUrl(null);
     };
 
     loadPhoto();
@@ -44,51 +52,51 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-  if (!isAuth) {
-    setProfileUser(null);
-    return;
-  }
-
-  let isMounted = true;
-
-  const loadProfile = async () => {
-    try {
-      const response = await AuthService.getProfile();
-
-      if (!isMounted) return;
-
-      setProfileUser(response.data);
-    } catch (error) {
-      console.error("Ошибка загрузки профиля в шапке:", error);
+    if (!isAuth) {
+      setProfileUser(null);
+      return;
     }
-  };
 
-  loadProfile();
+    let isMounted = true;
 
-  const handleProfileUpdated = () => {
+    const loadProfile = async () => {
+      try {
+        const response = await AuthService.getProfile();
+
+        if (!isMounted) return;
+
+        setProfileUser(response.data);
+      } catch (error) {
+        console.error("Ошибка загрузки профиля в шапке:", error);
+      }
+    };
+
     loadProfile();
-  };
 
-  window.addEventListener("profileUpdated", handleProfileUpdated);
+    const handleProfileUpdated = () => {
+      loadProfile();
+    };
 
-  return () => {
-    isMounted = false;
-    window.removeEventListener("profileUpdated", handleProfileUpdated);
-  };
-}, [isAuth]);
+    window.addEventListener("profileUpdated", handleProfileUpdated);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("profileUpdated", handleProfileUpdated);
+    };
+  }, [isAuth]);
 
   const links = isAuth ? headerLinksAuth : headerLinksNotAuth;
 
   const avatarLetter = useMemo(() => {
-  const name =
-    profileUser?.first_name?.trim() ||
-    user?.first_name?.trim() ||
-    profileUser?.email?.trim() ||
-    user?.email?.trim() ||
-    "";
+    const name =
+      profileUser?.first_name?.trim() ||
+      user?.first_name?.trim() ||
+      profileUser?.email?.trim() ||
+      user?.email?.trim() ||
+      "";
 
-  return (name.charAt(0) || "Л").toUpperCase();
-}, [profileUser, user]);
+    return (name.charAt(0) || "Л").toUpperCase();
+  }, [profileUser, user]);
 
   const goToProfile = () => {
     setMenuOpen(false);
@@ -103,6 +111,7 @@ const Header = () => {
   const handleConfirmLogout = async () => {
     setConfirmOpen(false);
     localStorage.removeItem("userPhoto");
+    setPhotoUrl(null);
     await dispatch(logoutUser());
     navigate("/");
   };
@@ -118,7 +127,6 @@ const Header = () => {
         <div className={styles.inner}>
           <Link to="/home" className={styles.brand}>
             <img className={styles.logoImg} src={ivtLogo} alt="ИВТ" />
-
             <img className={styles.sipsLogoImg} src={sipsLogo} alt="SIPS" />
           </Link>
 
@@ -156,7 +164,13 @@ const Header = () => {
                 type="button"
                 aria-label="Профиль"
               >
-                {photoUrl ? (
+                {!isAuth ? (
+                  <img
+                    className={styles.avatarImg}
+                    src={avatarPlaceholder}
+                    alt="Аватар пользователя"
+                  />
+                ) : photoUrl ? (
                   <img
                     className={styles.avatarImg}
                     src={photoUrl}

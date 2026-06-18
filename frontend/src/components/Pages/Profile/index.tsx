@@ -77,6 +77,7 @@ export default function Profile() {
           last_name: profile.last_name || "",
           first_name: profile.first_name || "",
           middle_name: profile.middle_name || "",
+          organization: profile.organization || "",
           email: profile.email || "",
         }));
       } catch (error) {
@@ -91,17 +92,17 @@ export default function Profile() {
     };
   }, []);
 
-useEffect(() => {
-  const saved = localStorage.getItem("userPhoto");
+  useEffect(() => {
+    const saved = localStorage.getItem("userPhoto");
 
-  if (saved?.startsWith("data:image/")) {
-    setPhotoUrl(saved);
-    return;
-  }
+    if (saved?.startsWith("data:image/")) {
+      setPhotoUrl(saved);
+      return;
+    }
 
-  localStorage.removeItem("userPhoto");
-  setPhotoUrl(null);
-}, []);
+    localStorage.removeItem("userPhoto");
+    setPhotoUrl(null);
+  }, []);
 
   useEffect(() => {
     if (activeTab !== "history") return;
@@ -165,22 +166,22 @@ useEffect(() => {
   };
 
   const onPickPhoto = (e: ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
+    const file = e.target.files?.[0];
 
-  if (!file || !file.type.startsWith("image/")) return;
+    if (!file || !file.type.startsWith("image/")) return;
 
-  const reader = new FileReader();
+    const reader = new FileReader();
 
-  reader.onload = () => {
-    const result = String(reader.result || "");
+    reader.onload = () => {
+      const result = String(reader.result || "");
 
-    setPhotoUrl(result);
-    localStorage.setItem("userPhoto", result);
+      setPhotoUrl(result);
+      localStorage.setItem("userPhoto", result);
+    };
+
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
-
-  reader.readAsDataURL(file);
-  e.target.value = "";
-};
 
   const onDeletePhoto = () => {
     setPhotoUrl(null);
@@ -196,7 +197,7 @@ useEffect(() => {
     if (!personalForm.first_name || !personalForm.last_name || !personalForm.email) {
       setPersonalMsg({
         type: "error",
-        text: "Фамилия, имя и email — обязательные поля",
+        text: "Фамилия, имя и email обязательны для заполнения",
       });
       return;
     }
@@ -209,7 +210,7 @@ useEffect(() => {
       return;
     }
 
-        setIsSavingPersonal(true);
+    setIsSavingPersonal(true);
 
     try {
       const response = await AuthService.updateProfile({
@@ -233,6 +234,7 @@ useEffect(() => {
         type: "success",
         text: "Данные успешно обновлены ✓",
       });
+
       window.dispatchEvent(new Event("profileUpdated"));
     } catch (error) {
       console.error("Ошибка обновления профиля:", error);
@@ -277,7 +279,7 @@ useEffect(() => {
       return;
     }
 
-        setIsSavingPassword(true);
+    setIsSavingPassword(true);
 
     try {
       await AuthService.changePassword({
@@ -325,7 +327,7 @@ useEffect(() => {
           <div className={styles.avatarSection}>
             <div className={styles.avatarBig}>
               {photoUrl ? (
-                <img src={photoUrl} alt="avatar" />
+                <img src={photoUrl} alt="Аватар пользователя" />
               ) : (
                 <div className={styles.avatarFallbackBig}>
                   {getAvatarLetter(personalForm.first_name, personalForm.email)}
