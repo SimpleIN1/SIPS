@@ -5,13 +5,13 @@ import sys
 
 def main():
     size_cut = None
-    if len(sys.argv) > 0:
+    if len(sys.argv) > 1:
         size_cut = int(sys.argv[1])
 
     path = conf.PATH_TO_CUTTING_FILES
     with open(path, 'r') as f:
         for item in f.readlines():
-            src, dst = item.split(' ')
+            src, dst = item.split(' ')[:2]
             dst = str(dst).strip('\n')
             cut_by_contour(src, dst, size_cut or 500)
 
