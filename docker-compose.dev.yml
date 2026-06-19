@@ -7,6 +7,7 @@ services:
     ports:
       - "0.0.0.0:${NGINX_SERVER_PORT}:${NGINX_SERVER_PORT}"
     depends_on:
+#      - frontend
       - server-auth
     env_file:
       - .docker.nginx.env
@@ -15,6 +16,7 @@ services:
       - etc-letsencrypt:/etc/letsencrypt/
       - static-volume:/usr/src/app/AccountProject/static
       - ${PATH_TO_TILES}:/usr/src/tiles/
+      - frontend-volume1:/usr/src/app/frontend/build
     command: /bin/bash -c "envsubst '$${SERVER_NAME},$${SERVER_PORT},$${SSL_CERTIFICATE_PATH},$${SSL_CERTIFICATE_KEY_PATH}' < /usr/src/app/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
   server-account:
@@ -181,6 +183,16 @@ services:
     volumes:
       - composite-data-db-volume:/var/lib/postgresql/data/
 
+  frontend:
+    build:
+      context: .
+      dockerfile: dockerfile/frontend.Dockerfile
+    container_name: frontend
+    volumes:
+      - frontend-volume1:/usr/src/app/frontend/build
+    profiles:
+      - donotstart
+
   aria2-ui:
     image: hurlenko/aria2-ariang
     container_name: aria2-webui
@@ -220,4 +232,5 @@ volumes:
   composite-data-files:
   static-volume:
   etc-letsencrypt:
+  frontend-volume1:
   download-db:
