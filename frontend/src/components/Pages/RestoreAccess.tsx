@@ -4,7 +4,13 @@ import styles from "./RestoreAccessPage.module.scss";
 import { BackArrow } from "@/components/BackArrow/BackArrow";
 import AuthService from "@/service/auth-service";
 
-type Step = "email" | "reset" | "done";
+type Step = "email" | "code" | "reset" | "done";
+
+type ResetParams = {
+  userId: string;
+  timestamp: number;
+  signature: string;
+};
 
 function isValidEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
@@ -36,6 +42,11 @@ export default function RestoreAccess() {
   const [err, setErr] = useState<string | null>(null);
 
   const [email, setEmail] = useState(queryEmail);
+  const [otpCode, setOtpCode] = useState("");
+
+  const [resetParams, setResetParams] = useState<ResetParams | null>(
+    hasResetParams ? { userId, timestamp, signature } : null
+  );
 
   const [pass1, setPass1] = useState("");
   const [pass2, setPass2] = useState("");
@@ -46,8 +57,8 @@ export default function RestoreAccess() {
 
   const goBack = () => {
     if (step === "email") return navigate(-1);
-    if (step === "reset" && hasResetParams) return navigate("/authorization");
-    if (step === "reset") return setStep("email");
+    if (step === "code") return setStep("email");
+    if (step === "reset") return setStep("code");
     if (step === "done") return navigate("/authorization");
   };
 
@@ -74,11 +85,51 @@ export default function RestoreAccess() {
         login: emailToUse,
       });
 
-      setStep("done");
+      setEmail(emailToUse);
+      setStep("code");
     } catch (error) {
-      console.error("Ошибка отправки ссылки восстановления:", error);
+      console.error("Ошибка отправки кода восстановления:", error);
+      setErr("Не удалось отправить код восстановления");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      setErr("Не удалось отправить ссылку восстановления");
+  const verifyOtpCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErr(null);
+
+    const emailToUse = email.trim();
+    const code = otpCode.trim();
+
+    if (!emailToUse) {
+      setErr("Введите email");
+      return;
+    }
+
+    if (!code) {
+      setErr("Введите код из письма");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await AuthService.verifyResetPasswordOtp({
+        email: emailToUse,
+        otp_code: code,
+      });
+
+      setResetParams({
+        userId: response.data.user_id,
+        timestamp: response.data.timestamp,
+        signature: response.data.signature,
+      });
+
+      setStep("reset");
+    } catch (error) {
+      console.error("Ошибка проверки кода:", error);
+      setErr("Неверный код или срок действия кода истёк");
     } finally {
       setIsLoading(false);
     }
@@ -88,8 +139,8 @@ export default function RestoreAccess() {
     e.preventDefault();
     setErr(null);
 
-    if (!hasResetParams) {
-      setErr("Ссылка восстановления некорректна или устарела");
+    if (!resetParams) {
+      setErr("Код восстановления некорректен или устарел");
       return;
     }
 
@@ -115,9 +166,9 @@ export default function RestoreAccess() {
 
     try {
       await AuthService.resetPassword({
-        user_id: userId,
-        timestamp,
-        signature,
+        user_id: resetParams.userId,
+        timestamp: resetParams.timestamp,
+        signature: resetParams.signature,
         password: p1,
       });
 
@@ -128,8 +179,7 @@ export default function RestoreAccess() {
       }, 1000);
     } catch (error) {
       console.error("Ошибка восстановления пароля:", error);
-
-      setErr("Не удалось изменить пароль. Возможно, ссылка устарела");
+      setErr("Не удалось изменить пароль. Возможно, код устарел");
     } finally {
       setIsLoading(false);
     }
@@ -161,7 +211,7 @@ export default function RestoreAccess() {
           <>
             <h1 className={styles.title}>Восстановление доступа</h1>
             <p className={styles.subtitle}>
-              Введите email аккаунта. Мы отправим ссылку для установки нового пароля.
+              Введите email аккаунта. Мы отправим код для установки нового пароля.
             </p>
 
             <form onSubmit={sendResetLink} className={styles.form}>
@@ -185,7 +235,40 @@ export default function RestoreAccess() {
                 disabled={isLoading}
                 aria-busy={isLoading}
               >
-                {isLoading ? "Отправляем..." : "Отправить ссылку"}
+                {isLoading ? "Отправляем..." : "Отправить код"}
+              </button>
+            </form>
+          </>
+        )}
+
+        {step === "code" && (
+          <>
+            <h1 className={styles.title}>Введите код</h1>
+            <p className={styles.subtitle}>
+              Мы отправили код восстановления на почту {email}.
+            </p>
+
+            <form onSubmit={verifyOtpCode} className={styles.form}>
+              <label className={styles.label}>
+                Код из письма
+                <input
+                  className={styles.input}
+                  placeholder="Введите код"
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value)}
+                  autoFocus
+                />
+              </label>
+
+              {err && <div className={styles.error}>{err}</div>}
+
+              <button
+                type="submit"
+                className={styles.primaryBtnWide}
+                disabled={isLoading}
+                aria-busy={isLoading}
+              >
+                {isLoading ? "Проверяем..." : "Подтвердить код"}
               </button>
             </form>
           </>
@@ -268,9 +351,7 @@ export default function RestoreAccess() {
           <>
             <h1 className={styles.title}>Готово</h1>
             <p className={styles.subtitle}>
-              {hasResetParams
-                ? "Пароль успешно изменён. Сейчас мы вернём вас на страницу входа."
-                : "Ссылка для восстановления пароля отправлена на указанную почту."}
+              Пароль успешно изменён. Сейчас мы вернём вас на страницу входа.
             </p>
 
             <button

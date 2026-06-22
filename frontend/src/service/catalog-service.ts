@@ -2,27 +2,40 @@ import { IImage } from "@/interfaces/IImage";
 import api from "@/http";
 import { IImages } from "@/interfaces/IImages";
 
+type GenerateLinksResponse = {
+  links: {
+    id: number;
+    link: string;
+    datetime_expiration: string;
+  }[];
+};
+
 export default class CatalogService {
   static async getItems(images: IImage[]): Promise<IImages> {
-    const payload: IImages = { images };
+    const response = await api.post<GenerateLinksResponse>(
+      "/vcd/composites/generate-link",
+      { images }
+    );
 
-    const response = await api.post<IImages>("/vCD/composites/urls", payload);
-
-    return response.data;
+    return {
+      images: response.data.links.map((item) => ({
+        uid: String(item.id),
+        url: item.link,
+      })) as IImage[],
+    };
   }
 
   static async getTimes(date: string) {
-    const response = await api.post(`/vICOD/dates/${date}/times`, { date });
-
+    const response = await api.get(`/vicod/dates/times/snpp/${date}`);
     return response.data;
   }
 
   static async downloadImage(image: IImage): Promise<void> {
-    if (!image.uid) {
-      throw new Error("Невозможно скачать файл: сервер не вернул uid изображения");
+    if (!image.url) {
+      throw new Error("Невозможно скачать файл: сервер не вернул ссылку");
     }
 
-    const response = await api.get(`/vCD/composites/download/${image.uid}`, {
+    const response = await api.get(image.url, {
       responseType: "blob",
     });
 

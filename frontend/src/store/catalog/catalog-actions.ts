@@ -4,6 +4,11 @@ import TileService from "@/service/tile-service";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import DownloadHistoryService from "@/service/download-history-service";
 
+interface FetchCatalogTimesPayload {
+  satellite: string;
+  dates: string[];
+}
+
 export const fetchCatalogItems = createAsyncThunk(
   "catalog/fetchCatalogItems",
   async (images: IImage[]) => {
@@ -18,12 +23,16 @@ export const fetchCatalogItems = createAsyncThunk(
 
 export const fetchCatalogTimes = createAsyncThunk(
   "catalog/fetchCatalogTimes",
-  async (dates: string[]) => {
+  async ({ satellite, dates }: FetchCatalogTimesPayload) => {
     try {
+      if (!satellite || dates.length === 0) {
+        return [];
+      }
+
       const arr = await Promise.all(
-        dates.map(async (el) => {
-          const response = await TileService.getTimes(el);
-          return response.map((el2) => `${el} ${el2.label}`);
+        dates.map(async (date) => {
+          const response = await TileService.getTimes(satellite, date);
+          return response.map((time) => `${date} ${time.label}`);
         })
       );
 
@@ -40,9 +49,10 @@ export const downloadImage = createAsyncThunk(
   async (image: IImage, thunkAPI) => {
     try {
       await CatalogService.downloadImage(image);
+
       await DownloadHistoryService.createDownloadHistoryItem({
         data: `${image.satellite} | ${image.composite} | ${image.datetime}`,
-        });
+      });
 
       return image;
     } catch (err) {

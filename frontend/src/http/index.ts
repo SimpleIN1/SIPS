@@ -8,15 +8,13 @@ const api = axios.create({
 });
 
 const publicAuthEndpoints = [
-  "/account/auth/token/",
-  "/account/auth/token/refresh/",
-  "/account/auth/token/verify/",
-  "/account/register/",
-  "/account/register/verify/",
-  "/account/register-email/",
-  "/account/register-email/verify/",
-  "/account/reset-password/send-link/",
-  "/account/reset-password/",
+  "/vauth/token/",
+  "/vaccount/register/",
+  "/vaccount/register/verify/",
+  "/vaccount/register-email/",
+  "/vaccount/register-email/verify/",
+  "/vaccount/reset-password/send-link/",
+  "/vaccount/reset-password/",
 ];
 
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {

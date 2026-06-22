@@ -14,13 +14,20 @@ const normalizeTime = (value: unknown): string => {
     return "";
   }
 
-  const onlyDigits = String(value).replace(/\D/g, "");
+  const raw = String(value);
 
-  if (!onlyDigits) {
+  if (raw.includes(":")) {
+    const [hours, minutes] = raw.split(":");
+    return `${hours.padStart(2, "0")}${minutes.padStart(2, "0")}`;
+  }
+
+  const onlyDigits = raw.replace(/\D/g, "");
+
+  if (onlyDigits.length < 4) {
     return "";
   }
 
-  return onlyDigits.padStart(4, "0").slice(0, 4);
+  return onlyDigits.slice(0, 4);
 };
 
 const formatTimeLabel = (time: string): string => {
@@ -41,9 +48,7 @@ const TimeLine = ({ disabled = false }: TimeLineProps) => {
 
   const normalizedTimes = times
     .map((time) => {
-      const label = normalizeTime(time.label);
-      const value = normalizeTime(time.value);
-      const normalizedValue = value || label;
+      const normalizedValue = normalizeTime(time.label);
 
       return {
         label: formatTimeLabel(normalizedValue),

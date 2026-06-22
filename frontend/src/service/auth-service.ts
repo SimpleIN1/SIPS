@@ -11,6 +11,7 @@ type RegisterPayload = {
   last_name?: string;
   email?: string;
   middle_name?: string;
+  organization_name?: string;
 };
 
 export type ProfilePayload = {
@@ -18,6 +19,7 @@ export type ProfilePayload = {
   last_name?: string;
   middle_name?: string;
   email?: string;
+  organization_name?: string;
 };
 
 export type ChangePasswordPayload = {
@@ -28,6 +30,18 @@ export type ChangePasswordPayload = {
 
 export type SendResetPasswordLinkPayload = {
   login: string;
+};
+
+export type VerifyResetPasswordOtpPayload = {
+  email: string;
+  otp_code: string;
+};
+
+export type VerifyResetPasswordOtpResponse = {
+  detail: string;
+  user_id: string;
+  timestamp: number;
+  signature: string;
 };
 
 export type ResetPasswordPayload = {
@@ -48,7 +62,7 @@ export default class AuthService {
     email: string,
     password: string
   ): Promise<AxiosResponse<AuthorizationResponse>> {
-    return api.post<AuthorizationResponse>("/account/auth/token/", {
+    return api.post<AuthorizationResponse>("/vauth/token/", {
       email,
       password,
     });
@@ -64,43 +78,53 @@ export default class AuthService {
       last_name: user.last_name,
       email: user.email,
       middle_name: user.middle_name,
+      organization_name: user.organization,
     };
 
-    return api.post<RegistrationResponse>("/account/register/", payload);
+    return api.post<RegistrationResponse>("/vaccount/register/", payload);
   }
 
   static async getProfile(): Promise<AxiosResponse<IUser>> {
-    return api.get<IUser>("/account/profile/");
+    return api.get<IUser>("/vaccount/profile/");
   }
 
   static async updateProfile(
     payload: ProfilePayload
   ): Promise<AxiosResponse<IUser>> {
-    return api.patch<IUser>("/account/profile/", payload);
+    return api.patch<IUser>("/vaccount/profile/", payload);
   }
 
-    static async changePassword(
+  static async changePassword(
     payload: ChangePasswordPayload
   ): Promise<AxiosResponse<void>> {
-    return api.post<void>("/account/change-password/", payload);
+    return api.post<void>("/vaccount/change/password/", payload);
   }
 
-    static async sendResetPasswordLink(
+  static async sendResetPasswordLink(
     payload: SendResetPasswordLinkPayload
   ): Promise<AxiosResponse<void>> {
-    return api.post<void>("/account/reset-password/send-link/", payload);
+    return api.post<void>("/vaccount/reset/password/", payload);
+  }
+
+  static async verifyResetPasswordOtp(
+    payload: VerifyResetPasswordOtpPayload
+  ): Promise<AxiosResponse<VerifyResetPasswordOtpResponse>> {
+    return api.post<VerifyResetPasswordOtpResponse>(
+      "/vaccount/reset/password/otpcode/verify/",
+      payload
+    );
   }
 
   static async resetPassword(
     payload: ResetPasswordPayload
   ): Promise<AxiosResponse<void>> {
-    return api.post<void>("/account/reset-password/", payload);
+    return api.post<void>("/vaccount/reset/password/verify/", payload);
   }
 
-    static async verifyRegistration(
+  static async verifyRegistration(
     payload: VerifyRegistrationPayload
   ): Promise<AxiosResponse<void>> {
-    return api.post<void>("/account/register/verify/", payload);
+    return api.post<void>("/vaccount/register/verify/", payload);
   }
 
   static async logout(): Promise<void> {
@@ -111,7 +135,7 @@ export default class AuthService {
   static async refresh(
     refresh: string
   ): Promise<AxiosResponse<AuthorizationResponse>> {
-    return api.post<AuthorizationResponse>("/account/auth/token/refresh/", {
+    return api.post<AuthorizationResponse>("/vauth/token/refresh/", {
       refresh,
     });
   }

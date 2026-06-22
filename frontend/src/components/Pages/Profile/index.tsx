@@ -603,15 +603,38 @@ type FieldProps = {
 };
 
 function Field({ label, value, onChange, type = "text" }: FieldProps) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === "password";
+
   return (
     <div className={styles.field}>
       <label className={styles.fieldLabel}>{label}</label>
-      <input
-        className={styles.input}
-        value={value}
-        onChange={onChange}
-        type={type}
-      />
+
+      {isPassword ? (
+        <div className={styles.passRow}>
+          <input
+            className={styles.inputWide}
+            value={value}
+            onChange={onChange}
+            type={showPassword ? "text" : "password"}
+          />
+          <button
+            type="button"
+            className={styles.eyeBtn}
+            onClick={() => setShowPassword((value) => !value)}
+            aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+          >
+            👁
+          </button>
+        </div>
+      ) : (
+        <input
+          className={styles.input}
+          value={value}
+          onChange={onChange}
+          type={type}
+        />
+      )}
     </div>
   );
 }

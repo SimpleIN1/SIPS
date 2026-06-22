@@ -20,6 +20,8 @@ interface CalendarProps {
 const Calendar = ({ disabled = false }: CalendarProps) => {
   const dispatch = useAppDispatch();
 
+  const selectedSatellite = useAppSelector((state) => state.tile.satellite);
+
   const nondotdates: string[] =
     useAppSelector((state) => state.tile.nondotdates) || [];
 
@@ -62,7 +64,7 @@ const Calendar = ({ disabled = false }: CalendarProps) => {
   }, [currentDate]);
 
   const handleDayClick = async (date: Dayjs) => {
-    if (disabled) {
+    if (disabled || !selectedSatellite) {
       return;
     }
 
@@ -82,7 +84,12 @@ const Calendar = ({ disabled = false }: CalendarProps) => {
     dispatch(removeTimes());
 
     try {
-      await dispatch(fetchTimes(formattedDate)).unwrap();
+      await dispatch(
+        fetchTimes({
+          satellite: selectedSatellite,
+          date: formattedDate,
+        })
+      ).unwrap();
     } catch (error) {
       console.error("Ошибка загрузки времени:", error);
       dispatch(setTime(""));
@@ -110,7 +117,7 @@ const Calendar = ({ disabled = false }: CalendarProps) => {
     setView("months");
   };
 
-  if (disabled) {
+  if (disabled || !selectedSatellite) {
     return (
       <div className={s.block}>
         <div className={s.calendar}>
