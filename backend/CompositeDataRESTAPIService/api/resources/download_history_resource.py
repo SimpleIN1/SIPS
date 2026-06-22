@@ -63,11 +63,18 @@ class CompositeDownloadHistoryResource(Resource):
     @jwt_required()
     def get(self, *args, **kwargs):
         user_id = 1 if conf.TEST_USER else get_jwt().get("user_id")
-        page = int(request.args.get("page"))
-        per_page = int(request.args.get("per_page"))
 
-        if page < 1:
-            abort(400, message="Invalid page")
+        page_tmp = request.args.get("page")
+        if not page_tmp:
+            raise abort(400, message="Invalid page")
+
+        page = int(page_tmp)
+
+        page_per_tmp = request.args.get("per_page")
+        if not page_per_tmp:
+            raise abort(400, message="Invalid per_page")
+
+        per_page = int(page_per_tmp)
 
         if not (0 < per_page <= 100):
             abort(400, message="Invalid per_page")
