@@ -17,6 +17,7 @@ services:
       - static-volume:/usr/src/app/AccountProject/static
       - files-volume:/usr/src/app/AccountProject/files
       - ${PATH_TO_TILES}:/usr/src/tiles/
+      - ${PATH_TO_RU_REGIONS_JSON}:/usr/src/ru-regions-json/
       - frontend-volume1:/usr/src/app/frontend/build
     command: /bin/bash -c "envsubst '$${SERVER_NAME},$${SERVER_PORT},$${SSL_CERTIFICATE_PATH},$${SSL_CERTIFICATE_KEY_PATH}' < /usr/src/app/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
