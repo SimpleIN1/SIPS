@@ -12,7 +12,7 @@ services:
     env_file:
       - .docker.nginx.env
     volumes:
-      - ./nginx/conf.d/default-nonenc.conf:/usr/src/app/nginx/conf.d/default.conf
+      - ./nginx/conf.d/default.conf:/usr/src/app/nginx/conf.d/default.conf
       - etc-letsencrypt:/etc/letsencrypt/
       - static-volume:/usr/src/app/AccountProject/static
       - files-volume:/usr/src/app/AccountProject/files
