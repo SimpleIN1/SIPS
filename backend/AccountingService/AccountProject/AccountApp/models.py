@@ -3,13 +3,22 @@ from datetime import datetime
 from django.db import models
 from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import FileExtensionValidator
+from django_resized import ResizedImageField
 from django.contrib.auth.models import AbstractUser, UserManager
+
+from AccountApp.services.code_generator import generate_image_sequence
 
 
 class UserManagerCustom(UserManager):
     def create_user(self, username=None, email=None, password=None, **extra_fields):
         username = email.split("@")[0]
         return super().create_user(username, email, password, **extra_fields)
+
+
+def upload_to(instance, filename):
+    profile_image_id = generate_image_sequence()
+    return 'profile/image/{0}/{1}.webp'.format(instance.id, profile_image_id)
 
 
 class UserModel(AbstractUser):
@@ -20,6 +29,10 @@ class UserModel(AbstractUser):
     email = models.EmailField(unique=True)
     middle_name = models.CharField(max_length=150, null=True, blank=True, verbose_name="middle_name")
     organization_name = models.CharField(max_length=150, null=True, blank=True, verbose_name="organization_name")
+    image = ResizedImageField(
+        size=[500, 500], quality=75, upload_to=upload_to, keep_meta=False,
+        force_format='WEBP', blank=True, null=True,
+    )
 
     objects = UserManagerCustom()
 

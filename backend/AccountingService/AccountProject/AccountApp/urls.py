@@ -1,7 +1,7 @@
 from rest_framework.urls import path
 from rest_registration.api import views
 from AccountApp.views import VerifyOTPEmailRegistrationAPIView, RepeatOTPCodeEmailRegistrationAPIView, \
-    VerifyOTPResetPasswordAPIView, RepeatOTPCodeResetPasswordAPIView
+    VerifyOTPResetPasswordAPIView, RepeatOTPCodeResetPasswordAPIView, ProfileView, ProfileAPIView
 
 urlpatterns = [
     path('register/', views.register, name='register'),
@@ -17,7 +17,7 @@ urlpatterns = [
     path('reset/password/otpcode/verify/', VerifyOTPResetPasswordAPIView.as_view(), name='verify-otpcode-reset-password'),
     path('reset/password/otpcode/repeat/', RepeatOTPCodeResetPasswordAPIView.as_view(), name='repeat-otpcode-reset-password'),
 
-    path('profile/', views.profile, name='profile'),
+    path('profile/', ProfileAPIView.as_view(), name='profile'),
 
     path('change/password/', views.change_password, name='change-password'),
 ]

@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 from rest_registration.api.views.base import BaseAPIView
 from rest_framework.response import Response
 from rest_framework import status, permissions, exceptions
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_registration.api.views.profile import ProfileView
 
 from rest_registration.settings import registration_settings
 from rest_registration.exceptions import BadRequest, UserNotFound
@@ -275,3 +277,7 @@ class RepeatOTPCodeEmailRegistrationAPIView(DefaultAPIView):
     )
     def post(self, *args, **kwargs):
         return super().post(*args, **kwargs)
+
+
+class ProfileAPIView(ProfileView):
+    parser_classes = [MultiPartParser, FormParser]

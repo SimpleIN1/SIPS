@@ -28,3 +28,4 @@
 **/CompositeDataRESTAPIService/api/testflask.py
 **/DataProsessingService/loader/copy_from_outdata.py
 **/conf.d/default-nonenc.conf
+**/AccountingService/AccountProject/files

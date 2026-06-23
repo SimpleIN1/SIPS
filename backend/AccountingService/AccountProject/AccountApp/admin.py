@@ -17,6 +17,7 @@ class UserModelAdmin(UserAdmin):
                  "last_name",
                  "first_name",
                  "middle_name",
+                 "organization_name",
                  "email",
              )
          }
@@ -33,6 +34,13 @@ class UserModelAdmin(UserAdmin):
          },
          ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
+        (_("Profile image"),
+         {
+             "fields": (
+                 "image",
+             ),
+         },
+         ),
     )
     list_display = ("id", "last_name", "first_name", "middle_name", "email", "is_active", "is_staff")
     list_filter = ("is_staff", "is_superuser", "is_active", "groups")
