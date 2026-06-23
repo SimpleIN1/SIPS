@@ -1,5 +1,4 @@
 import api from "@/http";
-import { IImage } from "@/interfaces/IImage";
 
 type SelectedProductPayload = {
   satellite: string;
@@ -7,6 +6,35 @@ type SelectedProductPayload = {
   dotDate: string;
   nonDotDate: string;
   time: string;
+};
+
+type Satellite = {
+  id: number;
+  name: string;
+  tag: string;
+};
+
+type Composite = {
+  id: number;
+  name: string;
+};
+
+type TimeItem = {
+  time: string;
+  datetime: string;
+  id: number;
+};
+
+type TimesResponse = {
+  times: TimeItem[];
+};
+
+type GenerateLinksResponse = {
+  links: {
+    id: number;
+    link: string;
+    datetime_expiration: string;
+  }[];
 };
 
 const downloadBlob = (blob: Blob, fileName: string) => {
@@ -23,52 +51,80 @@ const downloadBlob = (blob: Blob, fileName: string) => {
   window.URL.revokeObjectURL(downloadUrl);
 };
 
+const normalizeTime = (time: string) =>
+  String(time).replace(/\D/g, "").slice(0, 4);
+
 export default class ProductDownloadService {
   static async downloadSelectedProduct(payload: SelectedProductPayload) {
-    const imageRequest: IImage = {
-      datetime: `${payload.dotDate} ${payload.time}`,
-      satellite: payload.satellite,
-      composite: payload.composite,
-    };
+    const satellitesResponse = await api.get<Satellite[]>("/vicod/satellites");
 
-    const urlsResponse = await api.post<{ images: IImage[] }>(
-      "/vCD/composites/urls",
+    const satelliteItem = satellitesResponse.data.find(
+      (item) => item.tag === payload.satellite || item.name === payload.satellite
+    );
+
+    if (!satelliteItem) {
+      throw new Error(`Спутник не найден: ${payload.satellite}`);
+    }
+
+    const compositesResponse = await api.get<Composite[]>("/vicod/composites");
+
+    const compositeItem = compositesResponse.data.find(
+      (item) => item.name === payload.composite
+    );
+
+    if (!compositeItem) {
+      throw new Error(`Композит не найден: ${payload.composite}`);
+    }
+
+    const timesResponse = await api.get<TimesResponse>(
+      `/vicod/dates/times/${payload.satellite}/${payload.dotDate}`
+    );
+
+    const selectedTime = normalizeTime(payload.time);
+
+    const datetimeItem = timesResponse.data.times.find(
+      (item) => normalizeTime(item.time) === selectedTime
+    );
+
+    if (!datetimeItem) {
+      throw new Error(`Время не найдено: ${payload.time}`);
+    }
+
+    const urlsResponse = await api.post<GenerateLinksResponse>(
+      "/vcd/composites/generate-link",
       {
-        images: [imageRequest],
+        images: [
+          {
+            datetime: datetimeItem.id,
+            satellite: satelliteItem.id,
+            composite: compositeItem.id,
+          },
+        ],
       }
     );
 
-    const image = urlsResponse.data.images?.[0];
+    const link = urlsResponse.data.links?.[0];
 
-    if (!image) {
-      throw new Error("Сервер не вернул данные для скачивания");
+    if (!link) {
+      throw new Error("Сервер не вернул ссылку для скачивания");
     }
 
     const fileName = `${payload.nonDotDate}_${payload.time}_${payload.satellite}_${payload.composite}.tif`
       .replaceAll(" ", "_")
       .replaceAll(":", "-");
 
-    if (image.uid) {
-      const fileResponse = await api.get(
-        `/vCD/composites/download/${image.uid}`,
-        {
-          responseType: "blob",
-        }
-      );
+    const fileResponse = await api.get(link.link, {
+      responseType: "blob",
+    });
 
-      downloadBlob(fileResponse.data, fileName);
-      return image;
-    }
+    downloadBlob(fileResponse.data, fileName);
 
-    if (image.url) {
-      const fileResponse = await api.get(image.url, {
-        responseType: "blob",
-      });
-
-      downloadBlob(fileResponse.data, fileName);
-      return image;
-    }
-
-    throw new Error("У изображения нет uid или url для скачивания");
+    return {
+      datetime: String(datetimeItem.id),
+      satellite: String(satelliteItem.id),
+      composite: String(compositeItem.id),
+      uid: String(link.id),
+      url: link.link,
+    };
   }
 }

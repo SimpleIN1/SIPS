@@ -5,17 +5,22 @@ import { Mark } from "@mui/base";
 import { ISatelliteResponse } from "@/interfaces/ISatelliteResponse";
 import { ICompositeResponse } from "@/interfaces/ICompositeResponse";
 
-export const fetchDates = createAsyncThunk<IDates, string | undefined>(
+export const fetchDates = createAsyncThunk<IDates, string>(
   "tile/fetchDates",
-  async () => {
-    return await TileService.getDates();
+  async (satellite: string) => {
+    return await TileService.getDates(satellite);
   }
 );
 
-export const fetchTimes = createAsyncThunk<Mark[], string>(
+interface FetchTimesPayload {
+  satellite: string;
+  date: string;
+}
+
+export const fetchTimes = createAsyncThunk<Mark[], FetchTimesPayload>(
   "tile/fetchTimes",
-  async (date: string) => {
-    return await TileService.getTimes(date);
+  async ({ satellite, date }: FetchTimesPayload) => {
+    return await TileService.getTimes(satellite, date);
   }
 );
 

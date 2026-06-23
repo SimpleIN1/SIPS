@@ -33,7 +33,7 @@ const Satelite = () => {
     }
 
     dispatch(setSatellite(value as ESatellite));
-    dispatch(fetchDates(""));
+    dispatch(fetchDates(value));
   };
 
   return (

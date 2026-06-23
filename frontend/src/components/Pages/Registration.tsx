@@ -19,6 +19,7 @@ const Registration = () => {
 
   const [err, setErr] = useState<string | null>(null);
   const [ok, setOk] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -34,7 +35,6 @@ const Registration = () => {
     setErr(null);
     setOk(null);
 
-    // супер-простая проверка
     if (!form.email || !form.password || !form.first_name || !form.last_name) {
       setErr("Заполни обязательные поля: Email, Пароль, Имя, Фамилия");
       return;
@@ -44,7 +44,6 @@ const Registration = () => {
 
     if (registerUser.fulfilled.match(action)) {
       setOk("Регистрация успешна. Теперь войдите в аккаунт.");
-      // по UX можно перекидывать на логин:
       setTimeout(() => navigate("/authorization"), 600);
     } else {
       setErr("Не удалось зарегистрироваться. Проверь данные.");
@@ -129,15 +128,25 @@ const Registration = () => {
 
           <label className={styles.label}>
             Пароль*
-            <input
-              className={styles.input}
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              autoComplete="new-password"
-            />
+            <div className={styles.passRow}>
+              <input
+                className={styles.inputWide}
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className={styles.eyeBtn}
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+              >
+                👁
+              </button>
+            </div>
           </label>
 
           {err && <div className={styles.error}>{err}</div>}

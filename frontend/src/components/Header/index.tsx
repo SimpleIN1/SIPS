@@ -88,15 +88,30 @@ const Header = () => {
   const links = isAuth ? headerLinksAuth : headerLinksNotAuth;
 
   const avatarLetter = useMemo(() => {
-    const name =
-      profileUser?.first_name?.trim() ||
-      user?.first_name?.trim() ||
-      profileUser?.email?.trim() ||
-      user?.email?.trim() ||
-      "";
+  if (!isAuth) {
+    return "";
+  }
 
-    return (name.charAt(0) || "Л").toUpperCase();
-  }, [profileUser, user]);
+  const firstName =
+    profileUser?.first_name?.trim() ||
+    user?.first_name?.trim() ||
+    "";
+
+  if (firstName) {
+    return firstName.charAt(0).toUpperCase();
+  }
+
+  const email =
+    profileUser?.email?.trim() ||
+    user?.email?.trim() ||
+    "";
+
+  if (email) {
+    return email.charAt(0).toUpperCase();
+  }
+
+  return "";
+}, [isAuth, profileUser, user]);
 
   const goToProfile = () => {
     setMenuOpen(false);

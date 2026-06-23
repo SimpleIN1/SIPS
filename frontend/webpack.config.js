@@ -51,32 +51,26 @@ module.exports = {
   devtool: mode === "development" ? "source-map" : false,
   entry: "./src/index.tsx",
 
-devServer: {
-  port: port ?? 3001,
-  open: true,
-  historyApiFallback: true,
-  static: "./build",
-  hot: mode === "development",
-  allowedHosts: "all",
-  host: "0.0.0.0",
+  devServer: {
+    port: port ?? 3001,
+    open: true,
+    historyApiFallback: true,
+    static: "./build",
+    hot: mode === "development",
+    allowedHosts: "all",
+    host: "0.0.0.0",
 
     proxy: {
-    "/api/account": {
-      target: "http://127.0.0.1:5000",
-      changeOrigin: true,
-      secure: false,
-    },
-
-    "/api": {
-      target: "https://gis-eng3.esemc.nsc.ru:8443/api",
-      changeOrigin: true,
-      secure: false,
-      pathRewrite: {
-        "^/api": "",
+      "/api": {
+        target: "https://gis-eng3.esemc.nsc.ru:8443/api",
+        changeOrigin: true,
+        secure: false,
+        pathRewrite: {
+          "^/api": "",
+        },
       },
     },
   },
-},
 
   output: {
     path: path.resolve(__dirname, "build"),
@@ -156,10 +150,11 @@ devServer: {
       "@": path.resolve(__dirname, "src"),
     },
   },
+
   ignoreWarnings: [
-  {
-    module: /sass-loader/,
-    message: /Deprecation The legacy JS API is deprecated/,
-  },
-],
+    {
+      module: /sass-loader/,
+      message: /Deprecation The legacy JS API is deprecated/,
+    },
+  ],
 };

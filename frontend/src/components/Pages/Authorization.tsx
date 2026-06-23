@@ -13,6 +13,7 @@ type LoginForm = {
 const Authorization = () => {
   const [form, setForm] = useState<LoginForm>({ email: "", password: "" });
   const [err, setErr] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -73,15 +74,25 @@ const Authorization = () => {
 
           <label className={styles.label}>
             Пароль
-            <input
-              className={styles.input}
-              placeholder="••••••••"
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              autoComplete="current-password"
-            />
+            <div className={styles.passRow}>
+              <input
+                className={styles.inputWide}
+                placeholder="••••••••"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                className={styles.eyeBtn}
+                onClick={() => setShowPassword((value) => !value)}
+                aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
+              >
+                👁
+              </button>
+            </div>
           </label>
 
           {err && <div className={styles.error}>{err}</div>}
@@ -92,15 +103,15 @@ const Authorization = () => {
 
           <div className={styles.links}>
             <span>Забыли пароль?</span>
-                          <Link
-                to={
-                  form.email.trim()
-                    ? `/restore?email=${encodeURIComponent(form.email.trim())}`
-                    : "/restore"
-                }
-              >
-                Восстановить доступ
-              </Link>
+            <Link
+              to={
+                form.email.trim()
+                  ? `/restore?email=${encodeURIComponent(form.email.trim())}`
+                  : "/restore"
+              }
+            >
+              Восстановить доступ
+            </Link>
           </div>
         </form>
       </div>
