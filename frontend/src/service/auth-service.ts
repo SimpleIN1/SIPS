@@ -18,8 +18,8 @@ export type ProfilePayload = {
   first_name?: string;
   last_name?: string;
   middle_name?: string;
-  email?: string;
   organization_name?: string;
+  image?: File | null;
 };
 
 export type ChangePasswordPayload = {
@@ -91,7 +91,29 @@ export default class AuthService {
   static async updateProfile(
     payload: ProfilePayload
   ): Promise<AxiosResponse<IUser>> {
-    return api.patch<IUser>("/vaccount/profile/", payload);
+    const formData = new FormData();
+
+    if (payload.first_name !== undefined) {
+      formData.append("first_name", payload.first_name);
+    }
+
+    if (payload.last_name !== undefined) {
+      formData.append("last_name", payload.last_name);
+    }
+
+    if (payload.middle_name !== undefined) {
+      formData.append("middle_name", payload.middle_name);
+    }
+
+    if (payload.organization_name !== undefined) {
+      formData.append("organization_name", payload.organization_name);
+    }
+
+    if (payload.image) {
+      formData.append("image", payload.image);
+    }
+
+    return api.put<IUser>("/vaccount/profile/", formData);
   }
 
   static async changePassword(

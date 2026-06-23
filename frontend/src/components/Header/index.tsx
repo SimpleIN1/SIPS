@@ -13,6 +13,7 @@ import AuthService from "@/service/auth-service";
 type HeaderProfile = {
   first_name?: string;
   email?: string;
+  image?: string;
 } | null;
 
 const Header = () => {
@@ -29,31 +30,9 @@ const Header = () => {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   useEffect(() => {
-    const loadPhoto = () => {
-      const saved = localStorage.getItem("userPhoto");
-
-      if (saved?.startsWith("data:image/")) {
-        setPhotoUrl(saved);
-        return;
-      }
-
-      setPhotoUrl(null);
-    };
-
-    loadPhoto();
-
-    window.addEventListener("storage", loadPhoto);
-    const interval = setInterval(loadPhoto, 400);
-
-    return () => {
-      window.removeEventListener("storage", loadPhoto);
-      clearInterval(interval);
-    };
-  }, []);
-
-  useEffect(() => {
     if (!isAuth) {
       setProfileUser(null);
+      setPhotoUrl(null);
       return;
     }
 
@@ -62,10 +41,12 @@ const Header = () => {
     const loadProfile = async () => {
       try {
         const response = await AuthService.getProfile();
+        const profile = response.data as HeaderProfile;
 
         if (!isMounted) return;
 
-        setProfileUser(response.data);
+        setProfileUser(profile);
+        setPhotoUrl(profile?.image || null);
       } catch (error) {
         console.error("Ошибка загрузки профиля в шапке:", error);
       }
@@ -88,30 +69,30 @@ const Header = () => {
   const links = isAuth ? headerLinksAuth : headerLinksNotAuth;
 
   const avatarLetter = useMemo(() => {
-  if (!isAuth) {
+    if (!isAuth) {
+      return "";
+    }
+
+    const firstName =
+      profileUser?.first_name?.trim() ||
+      user?.first_name?.trim() ||
+      "";
+
+    if (firstName) {
+      return firstName.charAt(0).toUpperCase();
+    }
+
+    const email =
+      profileUser?.email?.trim() ||
+      user?.email?.trim() ||
+      "";
+
+    if (email) {
+      return email.charAt(0).toUpperCase();
+    }
+
     return "";
-  }
-
-  const firstName =
-    profileUser?.first_name?.trim() ||
-    user?.first_name?.trim() ||
-    "";
-
-  if (firstName) {
-    return firstName.charAt(0).toUpperCase();
-  }
-
-  const email =
-    profileUser?.email?.trim() ||
-    user?.email?.trim() ||
-    "";
-
-  if (email) {
-    return email.charAt(0).toUpperCase();
-  }
-
-  return "";
-}, [isAuth, profileUser, user]);
+  }, [isAuth, profileUser, user]);
 
   const goToProfile = () => {
     setMenuOpen(false);
@@ -125,8 +106,8 @@ const Header = () => {
 
   const handleConfirmLogout = async () => {
     setConfirmOpen(false);
-    localStorage.removeItem("userPhoto");
     setPhotoUrl(null);
+    setProfileUser(null);
     await dispatch(logoutUser());
     navigate("/");
   };

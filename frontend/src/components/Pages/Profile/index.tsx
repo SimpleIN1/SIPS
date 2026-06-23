@@ -27,6 +27,7 @@ export default function Profile() {
   const [activeTab, setActiveTab] = useState<ProfileTab>("profile");
 
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const [downloadHistory, setDownloadHistory] = useState<DownloadHistoryItem[]>([]);
@@ -68,9 +69,13 @@ export default function Profile() {
     const loadProfile = async () => {
       try {
         const response = await AuthService.getProfile();
-        const profile = response.data;
+        const profile = response.data as typeof response.data & { image?: string };
 
         if (!isMounted) return;
+
+        if (profile.image) {
+          setPhotoUrl(profile.image);
+        }
 
         setPersonalForm((prev) => ({
           ...prev,
@@ -92,17 +97,6 @@ export default function Profile() {
     };
   }, []);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("userPhoto");
-
-    if (saved?.startsWith("data:image/")) {
-      setPhotoUrl(saved);
-      return;
-    }
-
-    localStorage.removeItem("userPhoto");
-    setPhotoUrl(null);
-  }, []);
 
   useEffect(() => {
     if (activeTab !== "history") return;
@@ -170,22 +164,15 @@ export default function Profile() {
 
     if (!file || !file.type.startsWith("image/")) return;
 
-    const reader = new FileReader();
+    setPhotoFile(file);
+    setPhotoUrl(URL.createObjectURL(file));
 
-    reader.onload = () => {
-      const result = String(reader.result || "");
-
-      setPhotoUrl(result);
-      localStorage.setItem("userPhoto", result);
-    };
-
-    reader.readAsDataURL(file);
     e.target.value = "";
   };
 
   const onDeletePhoto = () => {
     setPhotoUrl(null);
-    localStorage.removeItem("userPhoto");
+    setPhotoFile(null);
   };
 
   const isValidEmail = (email: string) =>
@@ -217,7 +204,8 @@ export default function Profile() {
         last_name: personalForm.last_name,
         first_name: personalForm.first_name,
         middle_name: personalForm.middle_name,
-        email: personalForm.email,
+        organization_name: personalForm.organization,
+        image: photoFile,
       });
 
       const updatedProfile = response.data;
