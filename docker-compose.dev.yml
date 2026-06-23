@@ -38,6 +38,8 @@ services:
       - ./backend/AccountingService/AccountProject/:/usr/src/app/AccountProject/
       - static-volume:/usr/src/app/AccountProject/static
       - files-volume:/usr/src/app/AccountProject/files
+    environment:
+      - POSTGRES_HOST=postgres-auth
     command: bash -c '/usr/src/app/start.sh'
 
   server-auth:
@@ -56,6 +58,8 @@ services:
     volumes:
       - ./backend/AuthenticationService/AccountProject/:/usr/src/app/AccountProject/
       - static-volume:/usr/src/app/AccountProject/static
+    environment:
+      - POSTGRES_HOST=postgres-auth
     command: bash -c '/usr/src/app/start.sh'
 
   server-info-composite:
@@ -73,6 +77,8 @@ services:
       - "8000"
     volumes:
       - ./backend/InfoCompositeOutputDataRESTAPIService/api/:/usr/src/app/api/
+    environment:
+      - POSTGRES_HOST=postgres-composite
     command: bash -c '/usr/src/app/start.sh'
 
   server-composite-data:
@@ -95,6 +101,8 @@ services:
         source: ${PATH_TIFF_IMAGE}
         target: ${PATH_TIFF_IMAGE}
       - composite-data-files:/usr/src/app/files
+    environment:
+      - POSTGRES_HOST=postgres-composite-data
     command: bash -c '/usr/src/app/start.sh'
 
   server-docs-agregator:
