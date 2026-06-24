@@ -201,6 +201,21 @@ const normalizeTimeLabel = (time: string): string => {
   return value;
 };
 
+const toDashTime = (time: string): string => {
+  const value = String(time).trim().replace(":", "-");
+
+  if (/^\d{4}$/.test(value)) {
+    return `${value.slice(0, 2)}-${value.slice(2, 4)}`;
+  }
+
+  if (/^\d{3}$/.test(value)) {
+    const padded = value.padStart(4, "0");
+    return `${padded.slice(0, 2)}-${padded.slice(2, 4)}`;
+  }
+
+  return value;
+};
+
 const normalizeTimes = (data: TimesServerResponse | string[] | unknown): Mark[] => {
   const source = isRecord(data) && "times" in data ? data.times : data;
 
@@ -230,16 +245,6 @@ const normalizeTimes = (data: TimesServerResponse | string[] | unknown): Mark[] 
       value: timeToSliderValue(label),
     };
   });
-};
-
-const toServerTime = (time: string): string => {
-  const value = String(time).trim().replace(":", "").replace("-", "");
-
-  if (/^\d{3}$/.test(value)) {
-    return value.padStart(4, "0");
-  }
-
-  return value;
 };
 
 const normalizeSatellites = (
@@ -329,14 +334,7 @@ export default class TileService {
         `/vicod/dates/times/${satellite}/${date}`
       );
 
-      const times = normalizeTimes(response.data);
-
-      console.log(
-        `Доступное время для спутника ${satellite} и даты ${date}:`,
-        times
-      );
-
-      return times;
+      return normalizeTimes(response.data);
     } catch (error) {
       console.warn("Не удалось загрузить время с сервера:", error);
 
@@ -384,7 +382,7 @@ export default class TileService {
     }
 
     try {
-      const serverTime = toServerTime(time);
+      const serverTime = toDashTime(time);
 
       const response = await api.get<CompositesServerResponse | string[]>(
         `/vicod/composites/${satellite}/${date}/${serverTime}`

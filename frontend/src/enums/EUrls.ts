@@ -13,11 +13,11 @@ export enum EUrls {
 
   MONOCHROME_TILE_URL = "https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png",
 
-  REGIONS_URL = "https://raw.githubusercontent.com/DeadEndjke/ru-regions-json/main/regions.json",
-
-  NATURE_RESERVES_URL = "https://raw.githubusercontent.com/DeadEndjke/ru-regions-json/main/natureReserves.json",
-
-  SETTLEMENTS_URL = "https://raw.githubusercontent.com/DeadEndjke/ru-regions-json/main/cities.json",
+  REGIONS_URL = "https://gis-eng3.esemc.nsc.ru:8443/ru-regions-json/regions.json",
+  
+  NATURE_RESERVES_URL = "https://gis-eng3.esemc.nsc.ru:8443/ru-regions-json/natureReserves.json",
+  
+  SETTLEMENTS_URL = "https://gis-eng3.esemc.nsc.ru:8443/ru-regions-json/cities.json",
 
   DATES_URL = "https://raw.githubusercontent.com/DeadEndjke/ru-regions-json/main/dates.json",
 }
