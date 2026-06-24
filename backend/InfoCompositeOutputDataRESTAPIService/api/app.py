@@ -12,7 +12,7 @@ from api.db.base import db
 from api.common.caching import cache
 from api.common.regex_convertor import RegexConverter
 from api.resources.composite_resource import CompositeResource, CompositeNameResource, CompositeNameListResource
-from api.resources.datetime_resource import DateResource, DateTimeResource
+from api.resources.datetime_resource import DateResource, DateTimeResource, DateTimeIdResource
 from api.resources.fire_value_resource import FireValueListResource
 from api.resources.satellite_resource import SatelliteListResource, SatelliteResource
 
@@ -67,6 +67,7 @@ app.register_blueprint(swagger_ui_blueprint)
 # Resources
 api.add_resource(DateResource, f"{conf.MAIN_ROUTE}/dates/<satellite>")
 api.add_resource(DateTimeResource, f"{conf.MAIN_ROUTE}/dates/times/<satellite>/<date>")
+api.add_resource(DateTimeIdResource, f"{conf.MAIN_ROUTE}/datetimes/ids")
 
 api.add_resource(CompositeNameListResource, f"{conf.MAIN_ROUTE}/composites")
 api.add_resource(CompositeNameResource, f"{conf.MAIN_ROUTE}/composites/<int:id>")

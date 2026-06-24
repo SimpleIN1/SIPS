@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from sqlalchemy import func
 
 from api.common.input_params import InputParams
@@ -79,3 +81,24 @@ class DateTime(InputParams):
             }
             for item in items
         ]
+
+
+class DateTimeIdService:
+    def get_datetimes(self, datetime_start_id: int|None, datetime_stop_id: int|None):
+        condition = (DateTimeModel.id.is_not(None))
+        if datetime_start_id:
+            condition = (DateTimeModel.id >= datetime_start_id)
+        if datetime_stop_id:
+            condition = condition & (DateTimeModel.id <= datetime_stop_id)
+
+        datetimes = db.session.execute(
+            db.select(DateTimeModel.id, DateTimeModel.datetime) \
+            .where(condition)
+        )
+        return list(datetimes)
+
+    def format(self, items):
+        return {
+            item.id: item.datetime.strftime("%Y-%m-%d %H:%M")
+            for item in items
+        }
