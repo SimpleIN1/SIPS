@@ -14,7 +14,7 @@ const Registration = () => {
     first_name: "",
     last_name: "",
     middle_name: "",
-    organization: "",
+    organization_name: "",
   });
 
   const [err, setErr] = useState<string | null>(null);
@@ -108,7 +108,7 @@ const Registration = () => {
             <input
               className={styles.input}
               name="organization"
-              value={form.organization}
+              value={form.organization_name}
               onChange={handleChange}
               placeholder="Компания / ВУЗ"
             />
