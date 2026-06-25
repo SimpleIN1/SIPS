@@ -69,7 +69,7 @@ describe("user slice", () => {
           first_name: "Елизавета",
           last_name: "Герасимова",
           middle_name: "",
-          organization: "",
+          organization_name: "...",
         }
       )
     );

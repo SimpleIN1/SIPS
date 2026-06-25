@@ -78,7 +78,7 @@ export default class AuthService {
       last_name: user.last_name,
       email: user.email,
       middle_name: user.middle_name,
-      organization_name: user.organization,
+      organization_name: user.organization_name,
     };
 
     return api.post<RegistrationResponse>("/vaccount/register/", payload);

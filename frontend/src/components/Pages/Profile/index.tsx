@@ -40,7 +40,7 @@ export default function Profile() {
     last_name: user?.last_name || "",
     first_name: user?.first_name || "",
     middle_name: user?.middle_name || "",
-    organization: user?.organization || "",
+    organization: user?.organization_name || "",
     email: user?.email || "",
   });
 
@@ -82,7 +82,7 @@ export default function Profile() {
           last_name: profile.last_name || "",
           first_name: profile.first_name || "",
           middle_name: profile.middle_name || "",
-          organization: profile.organization || "",
+          organization: profile.organization_name || "",
           email: profile.email || "",
         }));
       } catch (error) {
@@ -215,6 +215,7 @@ export default function Profile() {
         last_name: updatedProfile.last_name || "",
         first_name: updatedProfile.first_name || "",
         middle_name: updatedProfile.middle_name || "",
+        organization: updatedProfile.organization_name || "",
         email: updatedProfile.email || "",
       }));
 

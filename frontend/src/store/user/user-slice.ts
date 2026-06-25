@@ -10,7 +10,7 @@ const initialState: UserState = {
     first_name: "",
     last_name: "",
     middle_name: "",
-    organization: "",
+    organization_name: "",
   },
   isAuth: false,
   isLoading: false,

@@ -5,5 +5,5 @@ export interface IUser{
 	first_name: string | undefined,
 	last_name: string | undefined,
 	middle_name: string | undefined,
-	organization: string | undefined
+	organization_name: string;
 }
