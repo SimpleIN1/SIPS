@@ -231,7 +231,7 @@ services:
     ports:
       - 8081:80 #default port is 8080, change as needed. Don't change the right hand side port (port 80)
     volumes:
-      - download-db:/srv
+      - ${PATH_FILE_TRACK_DIR}:/srv
     restart: unless-stopped
     profiles:
       - donotstart
