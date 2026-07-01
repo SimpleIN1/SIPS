@@ -48,13 +48,13 @@ class DateResource(Resource):
     def get(self, *args, **kwargs):
         satellite = kwargs['satellite']
         date_s = DateService()
-        cached_dates = cache.get("dates")
+        cached_dates = cache.get(f"dates_{satellite}")
 
         if not cached_dates:
             items = date_s.get_dates(satellite)
             cached_dates = date_s.format_dates(items)
             if cached_dates:
-                cache.set("dates", cached_dates, 6 * 60 * 60)
+                cache.set(f"dates_{satellite}", cached_dates, 6 * 60 * 60)
 
         return cached_dates
 
