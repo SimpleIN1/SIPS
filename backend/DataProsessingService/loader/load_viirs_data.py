@@ -9,6 +9,7 @@ from geoalchemy2.shape import from_shape
 import conf
 from db.models import composite_data, composite
 from db.queries import DefaultDataBaseQuery, CompositeDataBaseQuery, CompositeDataDataBaseQuery
+from utils.date_format import format_date_time
 from utils.geotiff_contour import get_geotiff_geo_contour, geotiff_to_polygon
 from utils.mkdir import make_directory
 
@@ -19,14 +20,6 @@ composite_dbq = CompositeDataBaseQuery()
 
 # Дл второй базы
 composite_data_dbq = CompositeDataDataBaseQuery()
-
-
-def format_date_time(date_time: str, format: str):
-    datetime_fixed = datetime.strptime(
-        f"{date_time}",
-        f"{format}"
-    )
-    return datetime_fixed
 
 
 def get_and_create_composites():
@@ -61,11 +54,11 @@ def get_and_create_satellites():
 
 
 def create_composite_files(
-        composite_files: dict,
-        composite_names: dict,
-        path_save: str,
-        satellite_id: int,
-        datetime_id: int
+    composite_files: dict,
+    composite_names: dict,
+    path_save: str,
+    satellite_id: int,
+    datetime_id: int
 ):
     logging.info("Perform create composite files")
     composite_model_files = []
@@ -207,12 +200,12 @@ def make_path_save(satellite: str, datetime_formatted: datetime):
     return path
 
 
-def copy_file_to_tif_dir(composite_filenames: dict, path_save: str):
-    for _, filename in composite_filenames.items():
-        filename = os.path.basename(filename)
-        dst_path = f"{path_save}/{filename}"
+def copy_file_to_tif_dir(composite_filenames: dict, dir_save: str):
+    for _, src_filename in composite_filenames.items():
+        filename = os.path.basename(src_filename)
+        dst_path = f"{dir_save}/{filename}"
         if not os.path.exists(dst_path):
-            shutil.copy(filename, dst_path)
+            shutil.copy(src_filename, dst_path)
 
 
 def main():

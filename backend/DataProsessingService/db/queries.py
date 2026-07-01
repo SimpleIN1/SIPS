@@ -110,8 +110,9 @@ class CompositeDataDataBaseQuery(DefaultDataBaseQuery):
 
     def delete_all(self):
         try:
-            self.session.query(composite_data.UserFileCompositeModel).delete()
             self.session.query(composite_data.DownloadHistoryModel).delete()
+            self.session.query(composite_data.DownloadLinkModel).delete()
+            self.session.query(composite_data.UserFileCompositeModel).delete()
             self.session.query(composite_data.FileCompositeModel).delete()
             self.session.query(composite_data.CompositePolygonModel).delete()
             self.session.commit()
