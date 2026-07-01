@@ -53,3 +53,6 @@ pattern_v375m_v750m_fire_value = re.compile(regex_v375m_v750m_fire_value)
 
 regex_GITCO = r"^GITCO_(\w+)_d(\d{8})_t(\d{4}).+\.h5$"
 pattern_GITCO = re.compile(regex_GITCO)
+
+CACHE_TYPE = os.getenv("CACHE_TYPE", 'RedisCache')
+CACHE_REDIS_URL = os.getenv("CACHE_REDIS_URL", "redis://localhost:6379/0")

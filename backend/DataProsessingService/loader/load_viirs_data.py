@@ -9,6 +9,7 @@ from geoalchemy2.shape import from_shape
 import conf
 from db.models import composite_data, composite
 from db.queries import DefaultDataBaseQuery, CompositeDataBaseQuery, CompositeDataDataBaseQuery
+from utils.cache_redis_flask import flask_cache
 from utils.date_format import format_date_time
 from utils.geotiff_contour import get_geotiff_geo_contour, geotiff_to_polygon
 from utils.mkdir import make_directory
@@ -250,6 +251,16 @@ def main():
             copy_file_to_tif_dir(composite_filenames, path_save)
 
             create_composite_files(composite_filenames, composite_names, path_save, satellite_id, datetime_obj.id)
+
+            tmp_date, tmp_time = datetime_formatted.strftime("%Y-%m-%d %H-%M").split(' ')
+            tmp_satellite = conf.SATELLITE_TAGS[satellite]
+
+            flask_cache.cache.delete(f"dates_{tmp_satellite}")
+            flask_cache.cache.delete(f"composite_{tmp_satellite}_{tmp_date}_{tmp_time}")
+            flask_cache.cache.delete(f"fire_value_{tmp_satellite}_{tmp_date}_375m")
+            flask_cache.cache.delete(f"fire_value_{tmp_satellite}_{tmp_date}_375m_{tmp_time}")
+            flask_cache.cache.delete(f"fire_value_{tmp_satellite}_{tmp_date}_750m")
+            flask_cache.cache.delete(f"fire_value_{tmp_satellite}_{tmp_date}_750m_{tmp_time}")
 
 
 if __name__ == '__main__':

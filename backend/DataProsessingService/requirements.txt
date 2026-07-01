@@ -7,3 +7,6 @@ tifffile==2024.8.30
 shapely==2.0.7
 imagecodecs==2024.12.30
 watchdog==6.0.0
+Flask==3.0.3
+redis==5.0.4
+Flask-Caching==2.3.0
