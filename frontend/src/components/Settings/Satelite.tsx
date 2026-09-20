@@ -24,7 +24,7 @@ const Satelite = () => {
         ];
 
   const isSatelliteDisabled = (satelliteTag: string) => {
-    return satelliteTag === ESatellite.NOAA_20;
+    return false && satelliteTag === ESatellite.NOAA_20;
   };
 
   const satelliteHandleChange = (value: string) => {
