@@ -10,3 +10,5 @@ RUN npm install
 COPY ./frontend .
 
 RUN npm run build
+
+ENTRYPOINT cp build/* dist -R

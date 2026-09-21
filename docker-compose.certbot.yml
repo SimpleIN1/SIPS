@@ -9,6 +9,7 @@ services:
       - ${LETSENCRYPT_PATH}:/etc/letsencrypt
       - ${CERTBOT_PATH}:/var/www/certbot
     command: /bin/bash -c "envsubst '$${SERVER_NAME}' < /usr/src/app/nginx/conf.d/default.conf > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+
   certbot:
     container_name: certbot
     image: certbot/certbot:latest

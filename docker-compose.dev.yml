@@ -216,7 +216,7 @@ services:
       dockerfile: dockerfile/frontend.Dockerfile
     container_name: frontend
     volumes:
-      - ${FRONTEND_BUILD_PATH}:/usr/src/app/frontend/build
+      - ${FRONTEND_BUILD_PATH}:/usr/src/app/frontend/dist
     profiles:
       - donotstart
 
@@ -227,3 +227,4 @@ volumes:
   composite-data-files:
   download-db:
   algmanager-db-volume:
+  frontend-volume:
