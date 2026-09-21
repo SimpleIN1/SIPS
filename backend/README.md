@@ -2,32 +2,40 @@
 
 ## Settings environs
 
+### Accounting service
+
 ---
 
-Move to "backend/AuthenticationService/AccountProject" dir and create environ files:
+Move to "backend/AccountingService/AccountProject" dir and create environ files:
     
-    .docker.auth.env
-    .docker.auth.postgres.env
+    .docker.account.env
+    .docker.account.postgres.env
     .docker.brocker.env
 
-Example conf for ".docker.auth.env":
+Example conf for ".docker.account.env":
 
-    DEBUG=1
-    SECRET_KEY=django-insecure-i29mexw0loav@^2l@kh7)v^4dr$6m+hy=qfd!==+s52$m%ek7c
+    DEBUG=0
+    SECRET_KEY=django-insecure-key
+    JWT_SECRET_KEY=jwt-secret-key-key
     
-    EMAIL_HOST=smtp.mail.ru
-    EMAIL_PORT=2525
+    ACCESS_TOKEN_LIFETIME=5
+    
+    ALLOWED_HOSTS=*
+    INTERNAL_IPS=127.0.0.1,0.0.0.0,localhost
+    CSRF_TRUSTED_ORIGINS=https://0.0.0.0:8443,https://127.0.0.1:8443,http://127.0.0.1:8090
+    CORS_ORIGIN_WHITELIST=https://0.0.0.0,https://127.0.0.1
+    
+    EMAIL_HOST=mail.ru
+    EMAIL_PORT=587
     EMAIL_USE_TLS=1
-    EMAIL_HOST_USER=testemail.emal@mail.ru
-    EMAIL_HOST_PASSWORD=ZfTnzUitFRhP6JmjzSqG
+    EMAIL_HOST_USER=test@mail.ru
+    EMAIL_HOST_PASSWORD=host_password
     
     WEBSITE_NAME=SIPS
-    SCHEMA=http
-    DOMAIN=0.0.0.0
-    PORT=5000
-    SUPPORT_EMAIL=test@example.ru
-    
-    EMAIL_SEND=1
+    SCHEMA=https
+    DOMAIN=127.0.0.1
+    PORT=8090
+    SUPPORT_EMAIL=test@mail.ru
     
     CACHE_REDIS=redis://redis:6379/0
     
@@ -38,7 +46,7 @@ Example conf for ".docker.auth.env":
     
     MIGRATIONS=1
 
-Example conf for ".docker.auth.postgres.env":
+Example conf for ".docker.account.postgres.env":
     
     POSTGRES_PASSWORD=postgres_pass
     POSTGRES_DB=postgres_db
@@ -46,30 +54,30 @@ Example conf for ".docker.auth.postgres.env":
     POSTGRES_PORT=5432
     POSTGRES_HOST=postgres-auth
 
-Example conf for ".docker.auth.postgres.env":
+Example conf for ".docker.account.postgres.env":
 
     CELERY_BROKER_URL=redis://redis:6379/1
     CELERY_RESULT_BACKEND=redis://redis:6379/1
 
-## Authentication service
-
----
 Example url to swagger documentation for authentication service:
     
-    http://127.0.0.1:5000/api/account/swagger/
+    http://127.0.0.1:5000/api/vaccount/docs/swagger/?format=openapi
 
 Run auth service:
 
-    docker-compose -f docker-compose.dev.yml up -d server-auth redis postgres-auth celery-worker
+    docker-compose -f docker-compose.dev.yml up -d server-account redis postgres-auth celery-worker
     or
-    docker-compose -f docker-compose.dev.hub.yml up -d server-auth redis postgres-auth celery-worker
+    docker-compose -f docker-compose.dev.hub.yml up -d server-account redis postgres-auth celery-worker
 
 Run commands into docker-container (not required):
 
-    docker-compose -f docker-compose.dev.yml exec server-auth ../venv/bin/python manage.py makemigrations
-    docker-compose -f docker-compose.dev.yml exec server-auth ../venv/bin/python manage.py migrate
+    docker-compose -f docker-compose.dev.yml exec server-account ../venv/bin/python manage.py makemigrations
+    docker-compose -f docker-compose.dev.yml exec server-account ../venv/bin/python manage.py migrate
 
 Run command collect static
 
-    docker-compose -f docker-compose.prod.yml exec server ../venv/bin/python manage.py collectstatic
+    docker-compose -f docker-compose.prod.yml exec server-account ../venv/bin/python manage.py collectstatic
 
+### Auth service
+
+---
