@@ -61,7 +61,6 @@ INSTALLED_APPS = [
     "rest_registration",
 
     "AccountApp.apps.AccountAppConfig",
-    "AuthApp.apps.AuthAppConfig"
 ]
 
 MIDDLEWARE = [
