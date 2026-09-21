@@ -1,0 +1,16 @@
+[Unit]
+Description=Celery Broker для выполнения фоновых задач сервиса AlgoritmManager
+After=network.target
+
+[Service]
+Environment=APP_DIR=/var/www/AlgorithmManagerService/AlgorithmManagerProject
+WorkingDirectory=/var/www/AlgorithmManagerService/AlgorithmManagerProject
+Environment=PYTHONPATH=${APP_DIR}
+ExecStart=bash -c '../venv/bin/celery -A celery_app.app worker --loglevel=info --concurrency=4'
+Restart=always
+ProtectSystem=strict
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+

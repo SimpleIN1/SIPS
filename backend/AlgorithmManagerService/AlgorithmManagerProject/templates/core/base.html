@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AlgorithmManager{% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0-beta6/dist/htmx.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@4.0.0-beta6/dist/ext/hx-ws.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#6b7280',
+                        success: '#10b981',
+                        danger: '#ef4444',
+                        warning: '#f59e0b',
+                        info: '#06b6d4',
+                    }
+                }
+            }
+        }
+
+        const websocketRouteFiles = "/ws/files/download/"
+        const websocketRouteRuns = "/ws/runs"
+    </script>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="flex min-h-screen flex-col bg-gray-50" hx-on::after-request="if (event.detail.requestConfig.headers['HX-Redirect']) { window.location = event.detail.requestConfig.headers['HX-Redirect'] }">
+
+    {% include 'core/includes/header.html' %}
+
+    {% include 'core/includes/messages.html' %}
+
+
+    <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'core/includes/footer.html' %}
+
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        const url = new URL(window.location.href);
+        {% if page_obj.has_next %}
+            const link = document.getElementById('next_url');
+            url.searchParams.set('page', {{page_obj.next_page_number}});
+            link.href = url.href
+        {% endif %}
+
+        {% if page_obj.has_previous %}
+            const link1 = document.getElementById('prev_url');
+            url.searchParams.set('page', {{page_obj.previous_page_number}});
+            link1.href = url.href
+        {% endif %}
+    </script>
+</body>
+</html>

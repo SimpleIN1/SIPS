@@ -1,0 +1,740 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Новый запуск{% endblock %}
+
+{% block content %}
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+    <h1 class="text-3xl font-bold text-gray-900 flex items-center">
+        <svg class="w-8 h-8 mr-3 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        Запуск алгоритма
+    </h1>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="p-6">
+                <form method="post" id="runForm">
+                    {% csrf_token %}
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Запуск с sudo
+                            </label>
+                            <div class="flex items-center gap-3 bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="useSudoToggle" name="use_sudo" value="on" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+                                </label>
+                                <span class="text-sm text-gray-600">Выполнять скрипт с привилегиями (через sudo)</span>
+                            </div>
+                            <div id="sudoOptionsContainer" class="hidden mt-3">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    Опции sudo
+                                </label>
+                                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                    <div id="sudoOptionsList" class="space-y-3"></div>
+                                    <button type="button" id="addSudoOptionBtn"
+                                            class="mt-3 inline-flex items-center px-3 py-1.5 text-sm bg-white border border-cyan-600 text-cyan-700 rounded-lg hover:bg-cyan-50 transition duration-150">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                        </svg>
+                                        Добавить опцию
+                                    </button>
+                                </div>
+                                <p class="mt-2 text-xs text-gray-500">
+                                    Опции добавляются после <code class="bg-gray-200 px-1 rounded">sudo</code> и перед командой
+                                    (например: <code class="bg-gray-200 px-1 rounded">-u root</code>,
+                                    <code class="bg-gray-200 px-1 rounded">-H</code>,
+                                    <code class="bg-gray-200 px-1 rounded">-E</code>).
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="id_algorithm" class="block text-sm font-medium text-gray-700 mb-2">
+                                Алгоритм <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.algorithm }}
+                            {% if form.algorithm.errors %}
+                            <div class="mt-1 text-sm text-red-600 flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ form.algorithm.errors.0 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <label for="id_output_path" class="block text-sm font-medium text-gray-700 mb-2">
+                                Директория результата
+                            </label>
+                            <input type="text" name="output_path" placeholder="/path/to/dir/"
+                                   class="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out"
+                                   maxlength="500" id="id_output_path">
+                            <p class="mt-1 text-xs text-gray-500">Пример: /path/to/dir/</p>
+
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Дополнительные аргументы
+                            </label>
+                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                <div id="extraArgsList" class="space-y-3"></div>
+                                <button type="button" id="addExtraArgBtn"
+                                        class="mt-3 inline-flex items-center px-3 py-1.5 text-sm bg-white border border-cyan-600 text-cyan-700 rounded-lg hover:bg-cyan-50 transition duration-150">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                                    </svg>
+                                    Добавить аргумент
+                                </button>
+                            </div>
+                            <p class="mt-2 text-xs text-gray-500">
+                                Аргументы добавляются в конец командной строки скрипта.
+                                Значение можно ввести текстом, выбрать загруженный файл или передать аргумент-флаг без значения.
+                            </p>
+                        </div>
+                        <div id="optionsContainer" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Опции запуска
+                            </label>
+                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                <div id="optionsList" class="space-y-3">
+                                    <!-- Опции загружаются динамически -->
+                                </div>
+                            </div>
+                            <p class="mt-2 text-xs text-gray-500">
+                                <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Для булевых опций оставьте поле значения пустым. Для опций со значением укажите нужное значение или выберите файл.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex items-center space-x-3">
+                        <button type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 transition duration-150 ease-in-out font-medium shadow-md">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            Запустить
+                        </button>
+                        <a href="{% url 'core:processing_list' %}"
+                           class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-150 ease-in-out font-medium">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden sticky top-4 mb-6">
+            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200">
+                <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Информация
+                </h2>
+            </div>
+            <div class="p-6">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Параметры запуска:</h3>
+                <ul class="space-y-2 text-sm mb-4">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-cyan-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-gray-600">Выберите алгоритм и файл</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-cyan-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-gray-600">Укажите путь к проекту</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-cyan-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-gray-600">Настройте опции запуска</span>
+                    </li>
+                </ul>
+                <hr class="border-gray-200 my-4">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Мониторинг:</h3>
+                <ul class="space-y-2 text-sm">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-cyan-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-gray-600">WebSocket подключение</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-cyan-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-gray-600">Обновление прогресса</span>
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-cyan-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-gray-600">Просмотр логов</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden sticky top-4">
+            <div class="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-gray-800 flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Опции
+                </h2>
+                <span id="runArgsCount"
+                      class="hidden text-xs font-semibold bg-cyan-100 text-cyan-800 px-2.5 py-1 rounded-full">0</span>
+            </div>
+            <div class="p-6">
+                <h3 class="text-sm font-medium text-gray-700 mb-2">Опции выбранного алгоритма:</h3>
+                <div id="runArgsPreview" class="space-y-2 pr-1"></div>
+                <p class="mt-3 text-xs text-gray-500">
+                    <svg class="inline w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    Описание опции выводится при наведении курсора.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Данные об опциях для каждого алгоритма
+const algorithmOptions = {{ options_json|safe }};
+
+// Загруженные в системе файлы (для выбора как значения)
+const uploadedFiles = {{ files_json|safe }};
+
+function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Формирует options для select файлов, сгруппированные по алгоритму
+function buildFileOptions() {
+    let html = '<option value="">— Не выбран файл —</option>';
+    const groups = {};
+    const order = [];
+    uploadedFiles.forEach(f => {
+        if (!groups[f.algorithm]) {
+            groups[f.algorithm] = [];
+            order.push(f.algorithm);
+        }
+        groups[f.algorithm].push(f);
+    });
+    order.forEach(algo => {
+        html += `<optgroup label="${escapeHtml(algo)}">`;
+        groups[algo].forEach(f => {
+            html += `<option value="${f.id}">${escapeHtml(f.name)}</option>`;
+        });
+        html += '</optgroup>';
+    });
+    return html;
+}
+
+// Скрытые поля для выбранных опций и значений
+let selectedOptionsContainer = document.createElement('div');
+selectedOptionsContainer.id = 'selectedOptionsContainer';
+selectedOptionsContainer.className = 'hidden';
+document.getElementById('runForm').appendChild(selectedOptionsContainer);
+
+let optionValuesContainer = document.createElement('div');
+optionValuesContainer.id = 'optionValuesContainer';
+optionValuesContainer.className = 'hidden';
+document.getElementById('runForm').appendChild(optionValuesContainer);
+
+
+function createHiddenOptionField(optionId) {
+    const existing = document.getElementById(`hidden_option_${optionId}`);
+    if (existing) return;
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.id = `hidden_option_${optionId}`;
+    input.name = 'selected_options';
+    input.value = optionId;
+    selectedOptionsContainer.appendChild(input);
+}
+
+function removeHiddenOptionField(optionId) {
+    const hidden = document.getElementById(`hidden_option_${optionId}`);
+    if (hidden) hidden.remove();
+}
+
+function createHiddenValueField(optionId, value) {
+    const existing = document.getElementById(`hidden_value_${optionId}`);
+    if (existing) {
+        existing.value = value;
+        return;
+    }
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.id = `hidden_value_${optionId}`;
+    input.name = `option_value_${optionId}`;
+    input.value = value || '';
+    optionValuesContainer.appendChild(input);
+}
+
+function removeHiddenValueField(optionId) {
+    const hidden = document.getElementById(`hidden_value_${optionId}`);
+    if (hidden) hidden.remove();
+}
+
+function toggleValueInput(optionId, show) {
+    const valueDiv = document.getElementById(`value_div_${optionId}`);
+    if (valueDiv) {
+        valueDiv.style.display = show ? 'block' : 'none';
+    }
+}
+
+// Дополнительные аргументы: динамические строки
+let extraArgCounter = 0;
+
+function addExtraArgRow() {
+    const idx = extraArgCounter++;
+    const row = document.createElement('div');
+    row.className = 'extra-arg-row grid grid-cols-12 gap-2 items-center bg-white border border-gray-200 rounded-md p-2 transition-opacity';
+
+    // Ручка перетаскивания
+    const handle = document.createElement('span');
+    handle.title = 'Перетащите, чтобы изменить порядок';
+    handle.className = 'col-span-1 flex items-center justify-center cursor-grab active:cursor-grabbing text-gray-400 hover:text-cyan-600';
+    handle.draggable = true;
+    handle.innerHTML = `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M7 4a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2zM7 10a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2zm-6 6a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2z"/>
+    </svg>`;
+
+    // Название аргумента
+    const argInput = document.createElement('input');
+    argInput.type = 'text';
+    argInput.name = `extra_arg_${idx}`;
+    argInput.placeholder='Например: --mask';
+    argInput.className = 'col-span-3 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-cyan-500 focus:border-cyan-500';
+
+    // Тип значения
+    const typeSelect = document.createElement('select');
+    typeSelect.name = `extra_arg_type_${idx}`;
+    typeSelect.className = 'col-span-3 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-cyan-500 focus:border-cyan-500';
+    typeSelect.innerHTML = `
+        <option value="value">Значение (текст)</option>
+        <option value="flag">Флаг (без значения)</option>
+        <option value="file_arg">Файл</option>
+        <option value="file">Файл (без аргумента)</option>
+    `;
+
+    // Текстовое значение
+    const valueInput = document.createElement('input');
+    valueInput.type = 'text';
+    valueInput.name = `extra_arg_value_${idx}`;
+    valueInput.placeholder='Введите значение';
+    valueInput.className = 'col-span-4 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-cyan-500 focus:border-cyan-500';
+
+    // Выбор файла
+    const fileSelect = document.createElement('select');
+    fileSelect.name = `extra_arg_file_${idx}`;
+    fileSelect.className = 'col-span-4 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-cyan-500 focus:border-cyan-500';
+    fileSelect.innerHTML = buildFileOptions();
+    fileSelect.style.display = 'none';
+
+    function toggleValueInputs() {
+        const t = typeSelect.value;
+        valueInput.style.display = t === 'value' ? '' : 'none';
+        fileSelect.style.display = t === 'file' ? '' : 'none';
+
+        switch (t) {
+            case 'value':
+                argInput.style.display = ''
+                valueInput.style.display = ''
+                fileSelect.style.display = 'none'
+                break;
+            case 'file':
+                argInput.style.display = 'none'
+                valueInput.style.display = 'none'
+                fileSelect.style.display = ''
+                break;
+            case 'file_arg':
+                argInput.style.display = ''
+                valueInput.style.display = 'none'
+                fileSelect.style.display = ''
+                break;
+        }
+
+    }
+    typeSelect.addEventListener('change', toggleValueInputs);
+    toggleValueInputs();
+
+    // Удаление строки
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.title = 'Удалить аргумент';
+    removeBtn.className = 'col-span-1 px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50 transition';
+    removeBtn.innerHTML = '&times;';
+    removeBtn.addEventListener('click', function() {
+        row.remove();
+        renumberExtraArgs();
+    });
+
+    // Drag-and-drop: перенумерация имён после перетаскивания
+    handle.addEventListener('dragstart', function(e) {
+        draggingExtraRow = row;
+        row.classList.add('opacity-50', 'border-cyan-400');
+        e.dataTransfer.effectAllowed = 'move';
+        try {
+            e.dataTransfer.setData('text/plain', '');
+        } catch (err) {
+            // IE/Edge legacy
+        }
+    });
+    handle.addEventListener('dragend', function() {
+        row.classList.remove('opacity-50', 'border-cyan-400');
+        draggingExtraRow = null;
+        renumberExtraArgs();
+    });
+
+    row.appendChild(handle);
+    row.appendChild(argInput);
+    row.appendChild(typeSelect);
+    row.appendChild(valueInput);
+    row.appendChild(fileSelect);
+    row.appendChild(removeBtn);
+
+    document.getElementById('extraArgsList').appendChild(row);
+}
+
+let draggingExtraRow = null;
+
+// Перенумерация имён полей в текущем порядке строк,
+// чтобы порядок в POST совпадал с визуальным
+function renumberExtraArgs() {
+    document.querySelectorAll('#extraArgsList .extra-arg-row').forEach((row, idx) => {
+        row.querySelectorAll('input[name^="extra_arg"], select[name^="extra_arg"]').forEach(el => {
+            el.name = el.name.replace(
+                /^extra_arg(_type|_value|_file)?_\d+$/,
+                (m, suffix) => `extra_arg${suffix || ''}_${idx}`
+            );
+        });
+    });
+}
+
+// Бейджи типов опций (AlgorithmOption.is_boolean) для блока «Опции»
+const optionTypeBadges = {
+    boolean: { label: 'флаг', classes: 'bg-blue-100 text-blue-800' },
+    value: { label: 'значение', classes: 'bg-green-100 text-green-800' }
+};
+
+// Склонение счётчика опций: 1 опция, 2 опции, 5 опций
+function pluralOptions(n) {
+    const n10 = n % 10, n100 = n % 100;
+    if (n10 === 1 && n100 !== 11) return 'опция';
+    if (n10 >= 2 && n10 <= 4 && (n100 < 10 || n100 >= 20)) return 'опции';
+    return 'опций';
+}
+
+// Стилизованный вывод опций алгоритма (таблица AlgorithmOptionValue) в блоке «Опции».
+// Блок — независимый справочник: показывает только данные таблицы
+// и не зависит от выбора в блоке «Опции запуска».
+function renderOptionsPreview() {
+    const preview = document.getElementById('runArgsPreview');
+    if (!preview) return;
+    const count = document.getElementById('runArgsCount');
+
+    const algorithmSelect = document.getElementById('id_algorithm');
+    const algorithmId = algorithmSelect ? algorithmSelect.value : '';
+    const options = (algorithmId && algorithmOptions[algorithmId]) || [];
+
+    if (count) {
+        count.textContent = options.length ? `${options.length} ${pluralOptions(options.length)}` : '';
+        count.classList.toggle('hidden', options.length === 0);
+    }
+
+    if (options.length === 0) {
+        preview.innerHTML = `
+            <div class="flex items-start bg-gray-50 border border-dashed border-gray-300 rounded-lg p-4">
+                <svg class="w-5 h-5 text-gray-400 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p class="text-xs text-gray-500">
+                    ${algorithmId ? 'У алгоритма нет опций.' : 'Выберите алгоритм, чтобы увидеть его опции.'}
+                </p>
+            </div>`;
+        return;
+    }
+
+    preview.innerHTML = options.map(opt => {
+        const enabled = opt.is_enabled;
+        const badge = opt.is_boolean ? optionTypeBadges.boolean : optionTypeBadges.value;
+        let valueHtml;
+        if (opt.is_boolean) {
+            valueHtml = enabled
+                ? '<span class="text-blue-700">включена по умолчанию</span>'
+                : '<span class="text-gray-400">не включена по умолчанию</span>';
+        } else {
+            valueHtml = opt.value
+                ? `<code class="bg-gray-100 border border-gray-200 rounded px-1.5 py-0.5 break-all">${escapeHtml(opt.value)}</code>`
+                : '<span class="text-gray-400">значение не задано</span>';
+        }
+
+        // Описание опции: обрезанное строкой, полное — в подсказке при наведении
+        const descHtml = opt.description ? `
+            <div class="relative group mt-1">
+                <p class="text-xs text-gray-500 truncate cursor-help" title="${escapeHtml(opt.description)}">
+                    ${escapeHtml(opt.description)}
+                    <svg class="inline ml-1 w-3.5 h-3.5 text-gray-400 group-hover:text-cyan-600 transition" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                </p>
+                <div class="hidden group-hover:block absolute left-0 bottom-full mb-1 w-72 max-w-[85vw] bg-gray-800 text-white text-xs leading-relaxed rounded-lg p-3 z-20" role="tooltip">
+                    ${escapeHtml(opt.description)}
+                </div>
+            </div>` : '';
+
+        const checkIcon = enabled
+            ? '<svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>'
+            : '<svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke-width="2"></circle></svg>';
+
+        return `
+            <div class="flex items-start bg-white border border-gray-200 rounded-lg p-3 hover:border-cyan-300 transition ${enabled ? '' : 'opacity-60'}">
+                <span class="flex-shrink-0 mr-2 mt-0.5">${checkIcon}</span>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center">
+                        <code class="text-sm font-medium text-gray-900 break-all">${escapeHtml(opt.name)}</code>
+                        <span class="ml-2 flex-shrink-0 px-2 py-0.5 text-xs rounded ${badge.classes}">${badge.label}</span>
+                    </div>
+                    <div class="mt-1 text-xs">${valueHtml}</div>
+                    <p class="text-xs text-gray-400 mt-1">Аргумент: <code class="bg-gray-200 px-1 rounded">${escapeHtml(opt.argument)}</code></p>
+                    ${descHtml}
+                </div>
+            </div>`;
+    }).join('');
+}
+
+// Первичная отрисовка; далее блок обновляется только при смене алгоритма
+function initOptionsPreview() {
+    renderOptionsPreview();
+}
+
+// Строка, перед которой должен вставиться перетаскиваемый элемент
+function getExtraArgAfterElement(container, y) {
+    const rows = Array.from(container.querySelectorAll('.extra-arg-row:not(.opacity-50)'));
+    return rows.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        }
+        return closest;
+    }, { offset: -Infinity, element: null }).element;
+}
+
+function initExtraArgsDnD() {
+    const list = document.getElementById('extraArgsList');
+    if (!list) return;
+
+    list.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!draggingExtraRow) return;
+        const afterRow = getExtraArgAfterElement(list, e.clientY);
+        if (afterRow === null) {
+            list.appendChild(draggingExtraRow);
+        } else {
+            list.insertBefore(draggingExtraRow, afterRow);
+        }
+    });
+    list.addEventListener('drop', function(e) {
+        e.preventDefault();
+    });
+}
+
+// Опции sudo: динамические строки
+let sudoOptionCounter = 0;
+let draggingSudoRow = null;
+
+function addSudoOptionRow() {
+    const idx = sudoOptionCounter++;
+    const row = document.createElement('div');
+    row.className = 'sudo-option-row grid grid-cols-12 gap-2 items-center bg-white border border-gray-200 rounded-md p-2 transition-opacity';
+
+    // Ручка перетаскивания
+    const handle = document.createElement('span');
+    handle.title = 'Перетащите, чтобы изменить порядок';
+    handle.className = 'col-span-1 flex items-center justify-center cursor-grab active:cursor-grabbing text-gray-400 hover:text-cyan-600';
+    handle.draggable = true;
+    handle.innerHTML = `<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M7 4a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2zM7 10a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2zm-6 6a1 1 0 110-2 1 1 0 010 2zm6 0a1 1 0 110-2 1 1 0 010 2z"/>
+    </svg>`;
+
+    // Название опции
+    const argInput = document.createElement('input');
+    argInput.type = 'text';
+    argInput.name = `sudo_arg_${idx}`;
+    argInput.placeholder = 'Например: -u';
+    argInput.className = 'col-span-3 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-cyan-500 focus:border-cyan-500';
+
+    // Тип значения
+    const typeSelect = document.createElement('select');
+    typeSelect.name = `sudo_arg_type_${idx}`;
+    typeSelect.className = 'col-span-3 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-cyan-500 focus:border-cyan-500';
+    typeSelect.innerHTML = `
+        <option value="flag">Флаг (без значения)</option>
+        <option value="value">Значение (текст)</option>
+    `;
+
+    // Текстовое значение
+    const valueInput = document.createElement('input');
+    valueInput.type = 'text';
+    valueInput.name = `sudo_arg_value_${idx}`;
+    valueInput.placeholder = 'Например: root';
+    valueInput.className = 'col-span-4 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-cyan-500 focus:border-cyan-500';
+
+    function toggleValueInput() {
+        valueInput.style.display = typeSelect.value === 'value' ? '' : 'none';
+    }
+    typeSelect.addEventListener('change', toggleValueInput);
+    toggleValueInput();
+
+    // Удаление строки
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.title = 'Удалить опцию';
+    removeBtn.className = 'col-span-1 px-2 py-1 text-sm text-red-600 border border-red-200 rounded hover:bg-red-50 transition';
+    removeBtn.innerHTML = '&times;';
+    removeBtn.addEventListener('click', function() {
+        row.remove();
+        renumberSudoOptions();
+    });
+
+    // Drag-and-drop: перенумерация имён после перетаскивания
+    handle.addEventListener('dragstart', function(e) {
+        draggingSudoRow = row;
+        row.classList.add('opacity-50', 'border-cyan-400');
+        e.dataTransfer.effectAllowed = 'move';
+        try {
+            e.dataTransfer.setData('text/plain', '');
+        } catch (err) {
+            // IE/Edge legacy
+        }
+    });
+    handle.addEventListener('dragend', function() {
+        row.classList.remove('opacity-50', 'border-cyan-400');
+        draggingSudoRow = null;
+        renumberSudoOptions();
+    });
+
+    row.appendChild(handle);
+    row.appendChild(argInput);
+    row.appendChild(typeSelect);
+    row.appendChild(valueInput);
+    row.appendChild(removeBtn);
+
+    document.getElementById('sudoOptionsList').appendChild(row);
+}
+
+// Перенумерация имён полей в текущем порядке строк,
+// чтобы порядок в POST совпадал с визуальным
+function renumberSudoOptions() {
+    document.querySelectorAll('#sudoOptionsList .sudo-option-row').forEach((row, idx) => {
+        row.querySelectorAll('input[name^="sudo_arg"], select[name^="sudo_arg"]').forEach(el => {
+            el.name = el.name.replace(
+                /^sudo_arg(_type|_value)?_\d+$/,
+                (m, suffix) => `sudo_arg${suffix || ''}_${idx}`
+            );
+        });
+    });
+}
+
+// Строка, перед которой должен вставиться перетаскиваемый элемент
+function getSudoOptionAfterElement(container, y) {
+    const rows = Array.from(container.querySelectorAll('.sudo-option-row:not(.opacity-50)'));
+    return rows.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        }
+        return closest;
+    }, { offset: -Infinity, element: null }).element;
+}
+
+function initSudoOptionsDnD() {
+    const list = document.getElementById('sudoOptionsList');
+    if (!list) return;
+
+    list.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!draggingSudoRow) return;
+        const afterRow = getSudoOptionAfterElement(list, e.clientY);
+        if (afterRow === null) {
+            list.appendChild(draggingSudoRow);
+        } else {
+            list.insertBefore(draggingSudoRow, afterRow);
+        }
+    });
+    list.addEventListener('drop', function(e) {
+        e.preventDefault();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const addBtn = document.getElementById('addExtraArgBtn');
+    if (addBtn) {
+        addBtn.addEventListener('click', addExtraArgRow);
+    }
+
+    initExtraArgsDnD();
+    initOptionsPreview();
+
+    // Переключатель sudo: показ/скрытие блока опций sudo
+    const sudoToggle = document.getElementById('useSudoToggle');
+    const sudoOptionsContainer = document.getElementById('sudoOptionsContainer');
+    if (sudoToggle) {
+        sudoToggle.addEventListener('change', function() {
+            if (sudoOptionsContainer) {
+                sudoOptionsContainer.classList.toggle('hidden', !this.checked);
+            }
+        });
+    }
+
+    const addSudoBtn = document.getElementById('addSudoOptionBtn');
+    if (addSudoBtn) {
+        addSudoBtn.addEventListener('click', addSudoOptionRow);
+    }
+
+    initSudoOptionsDnD();
+
+    const algorithmSelect = document.getElementById('id_algorithm');
+    if (algorithmSelect) {
+        algorithmSelect.addEventListener('change', function() {
+            renderOptionsPreview();
+        });
+
+        // Загрузка опций для выбранного алгоритма при инициализации
+        if (algorithmSelect.value) {
+            renderOptionsPreview();
+        }
+    }
+});
+</script>
+{% endblock %}
