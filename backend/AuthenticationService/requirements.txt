@@ -5,7 +5,6 @@ wheel==0.38.4
 djangorestframework==3.14.0
 django[argon2]
 django[bcrypt]
-python-dotenv==0.21.0
 redis==4.4.2
 django_redis==5.2.0
 PyJWT==2.6.0
